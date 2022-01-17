@@ -1,0 +1,10 @@
+{
+    "RoslynExtensionsOptions": {
+        "EnableAnalyzersSupport": true,
+        "LocationPaths": [
+            "./nuget-manually-downloaded-packages/microsoft.unity.analyzers.1.11.0/analyzers/dotnet/cs",
+            "./nuget-manually-downloaded-packages/roslynator.analyzers.3.2.0/analyzers/dotnet/cs",
+            "./nuget-manually-downloaded-packages/roslynator.formatting.analyzers.1.2.1/analyzers/dotnet/cs"
+        ]
+    }
+}
