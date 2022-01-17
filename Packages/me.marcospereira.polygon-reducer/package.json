@@ -1,0 +1,11 @@
+{
+    "name": "me.marcospereira.polygon-reducer",
+    "version": "1.0.1",
+    "displayName": "Polygon Reducer",
+    "description": "Reduce the vertex count of meshes to an adjustable level.",
+    "author": {
+      "name": "Marcos Pereira",
+      "email": "email@marcospereira.me",
+      "url": "https://marcospereira.me"
+    }
+  }
