@@ -50,6 +50,7 @@ namespace MarcosPereira.MeshManipulation {
         private Coroutine inspectorCoroutine;
 
         // Debugging fields - uncomment to display in inspector.
+        //
         // [Header("Debugging")]
         // [SerializeField]
         private bool highlightSeams = false;
@@ -131,7 +132,6 @@ namespace MarcosPereira.MeshManipulation {
                 return;
             }
 
-            // Read more about this.isInitialized above.
             this.isInitialized = false;
 
             // Restore original meshes, unless the reduced mesh has been
