@@ -1,6 +1,5 @@
-﻿{
-    "files.exclude":
-    {
+{
+    "files.exclude": {
         "**/.DS_Store":true,
         "**/.git":true,
         "**/.gitignore":true,
@@ -52,5 +51,10 @@
         "ProjectSettings/":true,
         "temp/":true,
         "Temp/":true
-    }
+    },
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.enableEditorConfigSupport": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true
 }
