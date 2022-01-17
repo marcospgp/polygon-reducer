@@ -15,18 +15,18 @@ namespace MarcosPereira.MeshManipulation {
             foldout.style.marginLeft =
                 new StyleLength(new Length(3, LengthUnit.Pixel));
 
-            SerializedProperty originalMeshName = property
-                .FindPropertyRelative("originalMeshName");
-            SerializedProperty originalVertexCount = property
-                .FindPropertyRelative("originalVertexCount");
-            SerializedProperty reducedVertexCount = property
-                .FindPropertyRelative("reducedVertexCount");
-            SerializedProperty originalTriangleCount = property
-                .FindPropertyRelative("originalTriangleCount");
-            SerializedProperty reducedTriangleCount = property
-                .FindPropertyRelative("reducedTriangleCount");
-            SerializedProperty seamVertexCount = property
-                .FindPropertyRelative("seamVertexCount");
+            SerializedProperty originalMeshName =
+                property.FindPropertyRelative("originalMeshName");
+            SerializedProperty originalVertexCount =
+                property.FindPropertyRelative("originalVertexCount");
+            SerializedProperty reducedVertexCount =
+                property.FindPropertyRelative("reducedVertexCount");
+            SerializedProperty originalTriangleCount =
+                property.FindPropertyRelative("originalTriangleCount");
+            SerializedProperty reducedTriangleCount =
+                property.FindPropertyRelative("reducedTriangleCount");
+            SerializedProperty seamVertexCount =
+                property.FindPropertyRelative("seamVertexCount");
 
             if (
                 originalMeshName == null ||
