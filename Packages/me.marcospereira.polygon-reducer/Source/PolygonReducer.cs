@@ -139,17 +139,13 @@ namespace MarcosPereira.MeshManipulation {
             for (int i = 0; i < this.originalMeshes.Count; i++) {
                 if (this.originalMeshes[i] == null) {
                     // An original mesh may be null, such as if it is not
-                    // read/write enabled.
+                    // read/write enabled. It is kept as null to hold its spot
+                    // in the array, which matches the arrays of components from
+                    // which meshes are extracted.
                     continue;
                 }
 
-                Debug.Log($"Restoring original mesh \"{}\"")
-
-                this.SetMesh(
-                    i,
-                    this.originalMeshes[i],
-                    ifEquals: this.reducedMeshes[i]
-                );
+                this.RestoreMesh(i);
             }
 
             // Stop coroutine
@@ -185,15 +181,15 @@ namespace MarcosPereira.MeshManipulation {
                     Mesh reducedMesh = this.extendedMeshes[i]
                         .GetMesh(this.reductionPercent);
 
+                    // Store reference to the new polygon-reduced mesh
+                    this.reducedMeshes[i] = reducedMesh;
+
                     this.SetMesh(i, reducedMesh);
 
                     // Update extended mesh info for inspector
                     // TODO: maybe it should be a struct to avoid garbage?
                     this.details[i] =
                         new ExtendedMeshInfo(this.extendedMeshes[i]);
-
-                    // Store reference to the new polygon-reduced mesh
-                    this.reducedMeshes[i] = reducedMesh;
                 }
 
                 lastReductionPercent = this.reductionPercent;
@@ -251,64 +247,47 @@ namespace MarcosPereira.MeshManipulation {
 
         private void RestoreMesh(int i) {
             Mesh original = this.originalMeshes[i];
+            Mesh reduced = this.reducedMeshes[i];
+
+            string errorMessage =
+                "Polygon Reducer: Did not restore mesh " +
+                $"\"{original.name}\"" +
+                " as it has been replaced after having been optimized.";
 
             if (i < this.meshFilters.Length) {
                 MeshFilter f = this.meshFilters[i];
 
-                if (f.sharedMesh.GetInstanceID() == original.GetInstanceID()) {
-
+                if (f.sharedMesh.GetInstanceID() == reduced.GetInstanceID()) {
+                    f.sharedMesh = original;
                 } else {
-                    Debug.LogError(
-                        "Polygon Reducer: Did not restore mesh as it has " +
-                        "been replaced after being optimized."
-                    );
+                    Debug.LogError(errorMessage);
+                }
+            } else {
+                SkinnedMeshRenderer r = this.skinnedMeshRenderers[
+                    i - this.meshFilters.Length
+                ];
+
+                if (r.sharedMesh.GetInstanceID() == reduced.GetInstanceID()) {
+                    r.sharedMesh = original;
+                } else {
+                    Debug.LogError(errorMessage);
                 }
             }
         }
 
         private void SetMesh(int i, Mesh mesh) {
-            string nullError =
-                "Polygon Reducer could not set mesh of " +
-                $"gameObject \"{this.gameObject.name}\" or one of its " +
-                "children. Missing reference to a ";
-
             if (i < this.meshFilters.Length) {
                 MeshFilter f = this.meshFilters[i];
 
-                if (f == null) {
-                    Debug.LogError($"{nullError} MeshFilter.");
-                    return;
-                }
-
-                if (ifEquals == null || f.sharedMesh == ifEquals) {
-                    // Important: use .sharedMesh, not .mesh. The latter is a hacky
-                    // cloning placeholder kind of thing.
-                    f.sharedMesh = mesh;
-                } else {
-                    Debug.LogError(
-                        "Polygon Reducer did not set mesh as it seems to " +
-                        "have been replaced."
-                    );
-                }
+                // Important: use .sharedMesh, not .mesh. The latter is a hacky
+                // cloning placeholder kind of thing.
+                f.sharedMesh = mesh;
             } else {
-                int j = i - this.meshFilters.Length;
-                SkinnedMeshRenderer r = this.skinnedMeshRenderers[j];
+                SkinnedMeshRenderer r = this.skinnedMeshRenderers[
+                    i - this.meshFilters.Length
+                ];
 
-                if (r == null) {
-                    Debug.LogError(
-                        $"{nullError} SkinnedMeshRenderer."
-                    );
-                    return;
-                }
-
-                if (ifEquals == null || r.sharedMesh == ifEquals) {
-                    r.sharedMesh = mesh;
-                } else {
-                    Debug.LogError(
-                        "Polygon Reducer did not set mesh as it seems to " +
-                        "have been replaced."
-                    );
-                }
+                r.sharedMesh = mesh;
             }
         }
 
