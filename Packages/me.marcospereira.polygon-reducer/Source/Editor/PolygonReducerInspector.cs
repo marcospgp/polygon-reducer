@@ -9,7 +9,8 @@ namespace MarcosPereira.MeshManipulation {
         public override VisualElement CreateInspectorGUI() {
             var inspector = new VisualElement();
 
-            // Display default inspector
+            // Display default inspector - only available starting with version
+            // 2021 of Unity.
             // InspectorElement.FillDefaultInspector(
             //     inspector,
             //     this.serializedObject,
@@ -22,30 +23,44 @@ namespace MarcosPereira.MeshManipulation {
                 )
             );
 
-            SerializedProperty array =
+            SerializedProperty detailsArray =
                 this.serializedObject.FindProperty("details");
 
-            if (array == null) {
+            if (detailsArray == null) {
                 Debug.LogError(
                     "Polygon Reducer: Missing field for custom inspector."
                 );
             }
 
             var foldout = new Foldout() {
-                text = array.displayName
+                text = detailsArray.displayName
             };
             inspector.Add(foldout);
 
             foldout.Add(new Label(
-                $"Found {array.arraySize} meshes in this GameObject and its " +
-                "children."
+                $"Found {detailsArray.arraySize} meshes in this GameObject " +
+                "and its children.\n"
             ));
 
-            for (int i = 0; i < array.arraySize; i++) {
+            for (int i = 0; i < detailsArray.arraySize; i++) {
                 foldout.Add(
-                    new PropertyField(array.GetArrayElementAtIndex(i))
+                    new PropertyField(detailsArray.GetArrayElementAtIndex(i))
                 );
             }
+
+            var debugFoldout = new Foldout() {
+                text = "Debug"
+            };
+            inspector.Add(debugFoldout);
+
+            SerializedProperty highlightSeams =
+                this.serializedObject.FindProperty("highlightSeams");
+
+            debugFoldout.Add(
+                new PropertyField(highlightSeams) {
+                    tooltip = highlightSeams.tooltip
+                }
+            );
 
             return inspector;
         }

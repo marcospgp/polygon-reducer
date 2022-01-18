@@ -49,13 +49,13 @@ namespace MarcosPereira.MeshManipulation {
 
         private Coroutine inspectorCoroutine;
 
-        // Debugging fields - uncomment to display in inspector.
-        //
-        // [Header("Debugging")]
-        // [SerializeField]
+        // Debugging fields
+        [SerializeField]
+        [Tooltip(
+            "Highlight vertices that cannot be collapsed due to being part " +
+            "of a mesh seam."
+        )]
         private bool highlightSeams = false;
-        // [SerializeField]
-        private bool verboseLogging = false;
 
         // When entering play mode, editor scripts see serialized values of an
         // enabled state in OnEnable(). To avoid running OnEnable() logic on
@@ -81,7 +81,7 @@ namespace MarcosPereira.MeshManipulation {
                             this.transform.TransformPoint(
                                 extendedMesh.vertices[i]
                             ),
-                            0.01f
+                            0.003f
                         );
                     }
                 }
@@ -142,6 +142,8 @@ namespace MarcosPereira.MeshManipulation {
                     // read/write enabled.
                     continue;
                 }
+
+                Debug.Log($"Restoring original mesh \"{}\"")
 
                 this.SetMesh(
                     i,
@@ -247,7 +249,24 @@ namespace MarcosPereira.MeshManipulation {
             this.reducedMeshes = new Mesh[this.originalMeshes.Count];
         }
 
-        private void SetMesh(int i, Mesh mesh, Mesh ifEquals = null) {
+        private void RestoreMesh(int i) {
+            Mesh original = this.originalMeshes[i];
+
+            if (i < this.meshFilters.Length) {
+                MeshFilter f = this.meshFilters[i];
+
+                if (f.sharedMesh.GetInstanceID() == original.GetInstanceID()) {
+
+                } else {
+                    Debug.LogError(
+                        "Polygon Reducer: Did not restore mesh as it has " +
+                        "been replaced after being optimized."
+                    );
+                }
+            }
+        }
+
+        private void SetMesh(int i, Mesh mesh) {
             string nullError =
                 "Polygon Reducer could not set mesh of " +
                 $"gameObject \"{this.gameObject.name}\" or one of its " +
@@ -257,7 +276,7 @@ namespace MarcosPereira.MeshManipulation {
                 MeshFilter f = this.meshFilters[i];
 
                 if (f == null) {
-                    this.LogVerbose($"{nullError} MeshFilter.", isError: true);
+                    Debug.LogError($"{nullError} MeshFilter.");
                     return;
                 }
 
@@ -266,7 +285,7 @@ namespace MarcosPereira.MeshManipulation {
                     // cloning placeholder kind of thing.
                     f.sharedMesh = mesh;
                 } else {
-                    this.LogVerbose(
+                    Debug.LogError(
                         "Polygon Reducer did not set mesh as it seems to " +
                         "have been replaced."
                     );
@@ -276,9 +295,8 @@ namespace MarcosPereira.MeshManipulation {
                 SkinnedMeshRenderer r = this.skinnedMeshRenderers[j];
 
                 if (r == null) {
-                    this.LogVerbose(
-                        $"{nullError} SkinnedMeshRenderer.",
-                        isError: true
+                    Debug.LogError(
+                        $"{nullError} SkinnedMeshRenderer."
                     );
                     return;
                 }
@@ -286,7 +304,7 @@ namespace MarcosPereira.MeshManipulation {
                 if (ifEquals == null || r.sharedMesh == ifEquals) {
                     r.sharedMesh = mesh;
                 } else {
-                    this.LogVerbose(
+                    Debug.LogError(
                         "Polygon Reducer did not set mesh as it seems to " +
                         "have been replaced."
                     );
@@ -312,12 +330,11 @@ namespace MarcosPereira.MeshManipulation {
             void StoreMesh(Mesh mesh) {
                 if (mesh != null) {
                     if (!mesh.isReadable) {
-                        this.LogVerbose(
+                        Debug.LogError(
                             "Polygon Reducer cannot modify mesh " +
                             $"\"{mesh.name}\" because it is not readable. " +
                             "Please enable the \"Read/Write Enabled\" " +
-                            "checkbox in the mesh's import settings.",
-                            isError: true
+                            "checkbox in the mesh's import settings."
                         );
 
                         // Store a null mesh to ensure indices match between
@@ -353,16 +370,6 @@ namespace MarcosPereira.MeshManipulation {
             }
 
             return originalMeshes;
-        }
-
-        private void LogVerbose(string message, bool isError = false) {
-            if (this.verboseLogging) {
-                if (isError) {
-                    Debug.LogError(message);
-                } else {
-                    Debug.Log(message);
-                }
-            }
         }
     }
 }
