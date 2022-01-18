@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace MarcosPereira.MeshManipulation {
     [CustomPropertyDrawer(typeof(ExtendedMeshInfo))]
-    public class ExtendedMeshInfoPropertyDrawer : PropertyDrawer {
+    public class ExtendedMeshInfoArrayPropertyDrawer : PropertyDrawer {
         public override VisualElement CreatePropertyGUI(
             SerializedProperty property
         ) {

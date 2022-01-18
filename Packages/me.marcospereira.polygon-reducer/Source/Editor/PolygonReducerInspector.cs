@@ -9,51 +9,37 @@ namespace MarcosPereira.MeshManipulation {
         public override VisualElement CreateInspectorGUI() {
             var inspector = new VisualElement();
 
-            // Display default inspector - only available starting with version
-            // 2021 of Unity.
-            // InspectorElement.FillDefaultInspector(
-            //     inspector,
-            //     this.serializedObject,
-            //     this
-            // );
-
+            // Reduction percent setting
             inspector.Add(
                 new PropertyField(
                     this.serializedObject.FindProperty("reductionPercent")
                 )
             );
 
-            SerializedProperty detailsArray =
-                this.serializedObject.FindProperty("details");
+            // Details foldout
 
-            if (detailsArray == null) {
-                Debug.LogError(
-                    "Polygon Reducer: Missing details array for custom " +
-                    "inspector."
-                );
-            }
-
-            var foldout = new Foldout() {
-                text = detailsArray.displayName,
-                value = false // Collapsed by default
-            };
-            inspector.Add(foldout);
-
-            var countLabel = new Label(
-                $"Found {detailsArray.arraySize} meshes in this GameObject " +
-                "and its children."
+            var details = new PropertyField(
+                this.serializedObject.FindProperty("details")
             );
 
-            countLabel.style.marginTop = new Length(2, LengthUnit.Pixel);
-            countLabel.style.marginBottom = new Length(2, LengthUnit.Pixel);
+            inspector.Add(details);
 
-            foldout.Add(countLabel);
+            // Wait for property field to be populated before modifying it.
+            // Source: https://forum.unity.com/threads/solved-how-to-force-update-visual-element-on-the-current-frame.727040/#post-4984787
+            _ = details.schedule.Execute(() => {
+                // Get size field of details array
+                IntegerField sizeField = details.Q<IntegerField>();
 
-            for (int i = 0; i < detailsArray.arraySize; i++) {
-                foldout.Add(
-                    new PropertyField(detailsArray.GetArrayElementAtIndex(i))
-                );
-            }
+                // Disallow changing array size in inspector
+                sizeField.SetEnabled(false);
+
+                sizeField.label = "Meshes found";
+                sizeField.tooltip =
+                    "The number of meshes found in this GameObject and its " +
+                    "children.";
+            });
+
+            // Debug foldout
 
             var debugFoldout = new Foldout() {
                 text = "Debug",
@@ -69,8 +55,6 @@ namespace MarcosPereira.MeshManipulation {
                     tooltip = highlightSeams.tooltip
                 }
             );
-
-            inspector.Add(new PropertyField(detailsArray));
 
             return inspector;
         }
