@@ -9,7 +9,6 @@ namespace MarcosPereira.MeshManipulation {
         public override VisualElement CreatePropertyGUI(
             SerializedProperty property
         ) {
-            Debug.Log("Creating property GUI");
             SerializedProperty originalMeshName =
                 property.FindPropertyRelative("originalMeshName");
             SerializedProperty originalVertexCount =
