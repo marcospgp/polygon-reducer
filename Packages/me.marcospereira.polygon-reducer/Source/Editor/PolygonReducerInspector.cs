@@ -70,6 +70,8 @@ namespace MarcosPereira.MeshManipulation {
                 }
             );
 
+            inspector.Add(new PropertyField(detailsArray));
+
             return inspector;
         }
     }
