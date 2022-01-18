@@ -28,7 +28,8 @@ namespace MarcosPereira.MeshManipulation {
 
             if (detailsArray == null) {
                 Debug.LogError(
-                    "Polygon Reducer: Missing field for custom inspector."
+                    "Polygon Reducer: Missing details array for custom " +
+                    "inspector."
                 );
             }
 
