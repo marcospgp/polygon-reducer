@@ -9,12 +9,6 @@ namespace MarcosPereira.MeshManipulation {
         public override VisualElement CreatePropertyGUI(
             SerializedProperty property
         ) {
-            var foldout = new Foldout();
-
-            // Align with default inspector fields
-            foldout.style.marginLeft =
-                new StyleLength(new Length(3, LengthUnit.Pixel));
-
             SerializedProperty originalMeshName =
                 property.FindPropertyRelative("originalMeshName");
             SerializedProperty originalVertexCount =
@@ -41,10 +35,17 @@ namespace MarcosPereira.MeshManipulation {
                     "field."
                 );
 
-                return foldout;
+                return new Foldout();
             }
 
-            foldout.text = originalMeshName.stringValue;
+            var foldout = new Foldout() {
+                text = originalMeshName.stringValue,
+                value = true // Expanded by default
+            };
+
+            // Align with default inspector fields
+            foldout.style.marginLeft =
+                new StyleLength(new Length(3, LengthUnit.Pixel));
 
             var a = new Label("Vertex Count");
             a.SetEnabled(false); // Disable to match style of other fields
