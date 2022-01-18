@@ -34,6 +34,11 @@ namespace MarcosPereira.MeshManipulation {
                 sizeField.SetEnabled(false);
 
                 sizeField.label = "Meshes found";
+
+                // The tooltip doesn't work when the IntegerField has been
+                // disabled, sadly. I tried disabling only the inner input
+                // instead, which made the tooltip work, but then the size value
+                // could still be changed by clicking and dragging the mouse.
                 sizeField.tooltip =
                     "The number of meshes found in this GameObject and its " +
                     "children.";
