@@ -33,14 +33,20 @@ namespace MarcosPereira.MeshManipulation {
             }
 
             var foldout = new Foldout() {
-                text = detailsArray.displayName
+                text = detailsArray.displayName,
+                value = false // Collapsed by default
             };
             inspector.Add(foldout);
 
-            foldout.Add(new Label(
+            var countLabel = new Label(
                 $"Found {detailsArray.arraySize} meshes in this GameObject " +
-                "and its children.\n"
-            ));
+                "and its children."
+            );
+
+            countLabel.style.marginTop = new Length(2, LengthUnit.Pixel);
+            countLabel.style.marginBottom = new Length(2, LengthUnit.Pixel);
+
+            foldout.Add(countLabel);
 
             for (int i = 0; i < detailsArray.arraySize; i++) {
                 foldout.Add(
@@ -49,7 +55,8 @@ namespace MarcosPereira.MeshManipulation {
             }
 
             var debugFoldout = new Foldout() {
-                text = "Debug"
+                text = "Debug",
+                value = false // Collapsed by default
             };
             inspector.Add(debugFoldout);
 
