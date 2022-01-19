@@ -1,17 +1,13 @@
 {
-    "name": "PolygonReducerEditor",
+    "name": "me.marcospereira.polygon-reducer",
     "rootNamespace": "",
-    "references": [
-        "GUID:24c6e64778caf49768737001036e105a"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "references": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

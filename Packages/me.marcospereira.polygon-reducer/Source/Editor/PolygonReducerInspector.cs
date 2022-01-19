@@ -44,21 +44,22 @@ namespace MarcosPereira.MeshManipulation {
             });
 
             // Debug foldout
+            // Work in progress - uncomment to display
 
-            var debugFoldout = new Foldout() {
-                text = "Debug",
-                value = false // Collapsed by default
-            };
-            inspector.Add(debugFoldout);
+            // var debugFoldout = new Foldout() {
+            //     text = "Debug",
+            //     value = false // Collapsed by default
+            // };
+            // inspector.Add(debugFoldout);
 
-            SerializedProperty highlightSeams =
-                this.serializedObject.FindProperty("highlightSeams");
+            // SerializedProperty highlightSeams =
+            //     this.serializedObject.FindProperty("highlightSeams");
 
-            debugFoldout.Add(
-                new PropertyField(highlightSeams) {
-                    tooltip = highlightSeams.tooltip
-                }
-            );
+            // debugFoldout.Add(
+            //     new PropertyField(highlightSeams) {
+            //         tooltip = highlightSeams.tooltip
+            //     }
+            // );
 
             return inspector;
         }
