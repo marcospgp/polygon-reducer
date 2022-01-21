@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 namespace MarcosPereira.MeshManipulation {
     [ExecuteAlways]
@@ -10,10 +9,9 @@ namespace MarcosPereira.MeshManipulation {
         // Keep a static dictionary with original Mesh references, so that only
         // a single ExtendedMesh is created for each Mesh even if this script
         // is present in multiple gameobjects with the same mesh.
-#pragma warning disable RCS0056 // A line is too long
-        private static readonly Dictionary<Mesh, ExtendedMesh> extendedMeshCache =
-            new Dictionary<Mesh, ExtendedMesh>();
-#pragma warning restore
+        private static readonly Dictionary<
+            Mesh, ExtendedMesh
+        > extendedMeshCache = new Dictionary<Mesh, ExtendedMesh>();
 
         [Range(0f, 100f)]
         [Tooltip(
@@ -23,30 +21,7 @@ namespace MarcosPereira.MeshManipulation {
         public float reductionPercent = 20f;
 
         [SerializeField, HideInInspector]
-        private MeshFilter[] meshFilters;
-
-        [SerializeField, HideInInspector]
-        private SkinnedMeshRenderer[] skinnedMeshRenderers;
-
-        // Original mesh references.
-        // MeshFilter meshes come first, then SkinnedMeshRenderer meshes.
-        [SerializeField, HideInInspector]
-        private List<Mesh> originalMeshes;
-
-        // Stores a reference to each original mesh's respective
-        // polygon-reduced mesh.
-        [SerializeField, HideInInspector]
-        private Mesh[] reducedMeshes;
-
-        // Used to retrieve new meshes at a desired quality level.
-        // TODO: serialize this
-        private ExtendedMesh[] extendedMeshes;
-
-        // Extended mesh information. Used for display in custom inspector,
-        // while the ExtendedMesh class itself is not serializable (which is a
-        // TODO).
-        [SerializeField]
-        private ExtendedMeshInfo[] details;
+        private List<MeshData> meshData;
 
         private Coroutine inspectorCoroutine;
 
@@ -74,7 +49,8 @@ namespace MarcosPereira.MeshManipulation {
 
         public void OnDrawGizmos() {
             if (this.highlightSeams) {
-                foreach (ExtendedMesh extendedMesh in this.extendedMeshes) {
+                foreach (MeshData m in this.meshData) {
+                    ExtendedMesh extendedMesh = m.extendedMesh;
                     Gizmos.color = Color.red;
 
                     foreach (int i in extendedMesh.seams) {
@@ -99,20 +75,19 @@ namespace MarcosPereira.MeshManipulation {
             // reducing already reduced meshes.
             if (!this.isInitialized) {
                 this.isInitialized = true;
-                this.Populate();
+
+                // Populate original meshes
+                this.meshData = this.LoadMeshes();
             }
 
             // TODO: Get extended meshes in Populate() instead once they are
             // serialized.
-            this.extendedMeshes = new ExtendedMesh[this.originalMeshes.Count];
-            this.details =
-                new ExtendedMeshInfo[this.originalMeshes.Count];
-            for (int i = 0; i < this.extendedMeshes.Length; i++) {
-                this.extendedMeshes[i] =
-                    PolygonReducer.GetExtendedMesh(this.originalMeshes[i]);
 
-                this.details[i] =
-                    new ExtendedMeshInfo(this.extendedMeshes[i]);
+            foreach (MeshData meshData in this.meshData) {
+                meshData.extendedMesh =
+                    PolygonReducer.GetExtendedMesh(meshData.originalMesh);
+                meshData.extendedMeshInfo =
+                    new ExtendedMeshInfo(meshData.extendedMesh);
             }
 
             // Use a coroutine instead of Update() for efficiency - once we want
@@ -137,16 +112,8 @@ namespace MarcosPereira.MeshManipulation {
 
             // Restore original meshes, unless the reduced mesh has been
             // replaced in the meantime.
-            for (int i = 0; i < this.originalMeshes.Count; i++) {
-                if (this.originalMeshes[i] == null) {
-                    // An original mesh may be null, such as if it is not
-                    // read/write enabled. It is kept as null to hold its spot
-                    // in the array, which matches the arrays of components from
-                    // which meshes are extracted.
-                    continue;
-                }
-
-                this.RestoreMesh(i);
+            foreach (MeshData meshData in this.meshData) {
+                this.RestoreMesh(meshData);
             }
 
             // Stop coroutine
@@ -154,13 +121,8 @@ namespace MarcosPereira.MeshManipulation {
                 this.StopCoroutine(this.inspectorCoroutine);
             }
 
-            // Clear lists
-            this.meshFilters = null;
-            this.skinnedMeshRenderers = null;
-            this.originalMeshes = null;
-            this.reducedMeshes = null;
-            this.extendedMeshes = null;
-            this.details = null;
+            // Clear mesh data
+            this.meshData.Clear();
         }
 
         public IEnumerator Monitor() {
@@ -177,20 +139,20 @@ namespace MarcosPereira.MeshManipulation {
                     continue;
                 }
 
-                for (int i = 0; i < this.originalMeshes.Count; i++) {
+                foreach (MeshData meshData in this.meshData) {
                     // TODO: This generates a lot of memory garbage :/
-                    Mesh reducedMesh = this.extendedMeshes[i]
-                        .GetMesh(this.reductionPercent);
+                    meshData.reducedMesh =
+                        meshData.extendedMesh.GetMesh(this.reductionPercent);
 
-                    // Store reference to the new polygon-reduced mesh
-                    this.reducedMeshes[i] = reducedMesh;
+                    if (meshData.meshFilter != null) {
+                        meshData.meshFilter.sharedMesh = meshData.reducedMesh;
+                    } else if (meshData.skinnedMeshRenderer != null) {
+                        meshData.skinnedMeshRenderer.sharedMesh =
+                            meshData.reducedMesh;
+                    }
 
-                    this.SetMesh(i, reducedMesh);
-
-                    // Update extended mesh info for inspector
-                    // TODO: maybe it should be a struct to avoid garbage?
-                    this.details[i] =
-                        new ExtendedMeshInfo(this.extendedMeshes[i]);
+                    meshData.extendedMeshInfo =
+                        new ExtendedMeshInfo(meshData.extendedMesh);
                 }
 
                 lastReductionPercent = this.reductionPercent;
@@ -232,63 +194,85 @@ namespace MarcosPereira.MeshManipulation {
             return true;
         }
 
-        private void Populate() {
-            this.meshFilters = this.gameObject
+        private List<MeshData> LoadMeshes() {
+            var meshData = new List<MeshData>();
+
+            static void logReadWriteError(string meshName) =>
+                Debug.LogError(
+                    $"Polygon Reducer cannot modify mesh \"{meshName}\" - " +
+                    "please enable the \"Read/Write Enabled\" " +
+                    "checkbox in the mesh's import settings."
+                );
+
+            MeshFilter[] meshFilters = this.gameObject
                 .GetComponentsInChildren<MeshFilter>(includeInactive: true);
 
-            this.skinnedMeshRenderers = this.gameObject
+            foreach (MeshFilter meshFilter in meshFilters) {
+                Mesh mesh = meshFilter.sharedMesh;
+
+                if (!mesh.isReadable) {
+                    logReadWriteError(mesh.name);
+                    continue;
+                }
+
+                meshData.Add(new MeshData() {
+                    originalMesh = mesh,
+                    meshFilter = meshFilter
+                });
+            }
+
+            SkinnedMeshRenderer[] skinnedMeshRenderers = this.gameObject
                 .GetComponentsInChildren<SkinnedMeshRenderer>(
                     includeInactive: true
                 );
 
-            this.originalMeshes = this.GetOriginalMeshes();
+            foreach (SkinnedMeshRenderer x in skinnedMeshRenderers) {
+                Mesh mesh = x.sharedMesh;
 
-            this.reducedMeshes = new Mesh[this.originalMeshes.Count];
+                if (!mesh.isReadable) {
+                    logReadWriteError(mesh.name);
+                    continue;
+                }
+
+                meshData.Add(new MeshData() {
+                    originalMesh = mesh,
+                    skinnedMeshRenderer = x
+                });
+            }
+
+            return meshData;
         }
 
-        private void RestoreMesh(int i) {
-            Mesh original = this.originalMeshes[i];
-            Mesh reduced = this.reducedMeshes[i];
-
+        private void RestoreMesh(MeshData meshData) {
             string errorMessage =
                 "Polygon Reducer: Did not restore mesh " +
-                $"\"{original.name}\"" +
+                $"\"{meshData.originalMesh.name}\"" +
                 " as it has been replaced after having been optimized.";
 
-            if (i < this.meshFilters.Length) {
-                MeshFilter f = this.meshFilters[i];
+            if (meshData.meshFilter != null) {
+                MeshFilter f = meshData.meshFilter;
 
-                if (f.sharedMesh.GetInstanceID() == reduced.GetInstanceID()) {
-                    f.sharedMesh = original;
+                if (
+                    f.sharedMesh.GetInstanceID() ==
+                        meshData.reducedMesh.GetInstanceID()
+                ) {
+                    f.sharedMesh = meshData.originalMesh;
+                } else {
+                    Debug.LogError(errorMessage);
+                }
+            } else if (meshData.skinnedMeshRenderer != null) {
+                SkinnedMeshRenderer r = meshData.skinnedMeshRenderer;
+
+                if (
+                    r.sharedMesh.GetInstanceID() ==
+                        meshData.reducedMesh.GetInstanceID()
+                ) {
+                    r.sharedMesh = meshData.originalMesh;
                 } else {
                     Debug.LogError(errorMessage);
                 }
             } else {
-                SkinnedMeshRenderer r = this.skinnedMeshRenderers[
-                    i - this.meshFilters.Length
-                ];
-
-                if (r.sharedMesh.GetInstanceID() == reduced.GetInstanceID()) {
-                    r.sharedMesh = original;
-                } else {
-                    Debug.LogError(errorMessage);
-                }
-            }
-        }
-
-        private void SetMesh(int i, Mesh mesh) {
-            if (i < this.meshFilters.Length) {
-                MeshFilter f = this.meshFilters[i];
-
-                // Important: use .sharedMesh, not .mesh. The latter is a hacky
-                // cloning placeholder kind of thing.
-                f.sharedMesh = mesh;
-            } else {
-                SkinnedMeshRenderer r = this.skinnedMeshRenderers[
-                    i - this.meshFilters.Length
-                ];
-
-                r.sharedMesh = mesh;
+                throw new System.Exception("Unexpected null components.");
             }
         }
 
@@ -302,54 +286,6 @@ namespace MarcosPereira.MeshManipulation {
             }
 
             return extendedMesh;
-        }
-
-        private List<Mesh> GetOriginalMeshes() {
-            var originalMeshes = new List<Mesh>();
-
-            void StoreMesh(Mesh mesh) {
-                if (mesh != null) {
-                    if (!mesh.isReadable) {
-                        Debug.LogError(
-                            "Polygon Reducer cannot modify mesh " +
-                            $"\"{mesh.name}\" because it is not readable. " +
-                            "Please enable the \"Read/Write Enabled\" " +
-                            "checkbox in the mesh's import settings."
-                        );
-
-                        // Store a null mesh to ensure indices match between
-                        // meshes and MeshFilters/SkinnedMeshRenderers
-                        originalMeshes.Add(null);
-                    }
-
-                    originalMeshes.Add(mesh);
-                }
-            }
-
-            if (this.meshFilters != null) {
-                foreach (MeshFilter meshFilter in this.meshFilters) {
-                    // Don't use MeshFilter.mesh here! It will leak meshes if
-                    // called in the editor, and is unecessary since we do not
-                    // modify the mesh directly.
-                    StoreMesh(meshFilter.sharedMesh);
-                }
-            }
-
-            if (this.skinnedMeshRenderers != null) {
-                foreach (SkinnedMeshRenderer r in this.skinnedMeshRenderers) {
-                    StoreMesh(r.sharedMesh);
-                }
-            }
-
-            if (originalMeshes.Count == 0) {
-                throw new System.Exception(
-                    "Polygon Reducer could not find a mesh on gameobject " +
-                    $"\"{this.gameObject.name}\" or on any of its children. " +
-                    "Are you missing a MeshFilter or SkinnedMeshRenderer?"
-                );
-            }
-
-            return originalMeshes;
         }
     }
 }
