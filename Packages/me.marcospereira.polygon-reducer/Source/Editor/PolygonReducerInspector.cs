@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
 
 namespace MarcosPereira.MeshManipulation {
     [CustomEditor(typeof(PolygonReducer))]
@@ -18,23 +17,8 @@ namespace MarcosPereira.MeshManipulation {
 
             // Details foldout
 
-            SerializedProperty meshData =
-                this.serializedObject.FindProperty("meshData");
-
-            var detailsList = new List<SerializedProperty>();
-
-            System.Collections.IEnumerator enumerator =
-                meshData.GetEnumerator();
-
-            while (enumerator.MoveNext()) {
-                meshData = enumerator.Current as SerializedProperty;
-                detailsList.Add(
-                    meshData.FindPropertyRelative("extendedMeshInfo")
-                );
-            }
-
-            PropertyField details = new PropertyField(
-                SerializedProperty.
+            var details = new PropertyField(
+                this.serializedObject.FindProperty("details")
             );
 
             inspector.Add(details);
