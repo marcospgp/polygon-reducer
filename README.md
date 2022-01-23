@@ -1,11 +1,9 @@
 # Polygon Reducer
 
-Unity package for reducing mesh vertex counts.
+Unity package for reducing mesh vertex counts in real time by dragging a slider.
 
-The package can be found in the `Packages` folder, as it has been set up as an
-embedded package in this project.
+The package can be found in the `Assets` folder.
 
 ## TODO
 
-* Show nothing in details when component is disabled;
-* Fix occasional reduction of already reduced mesh;
+* Fix occasional reduction of already reduced mesh (mesh shows up as `<mesh name> (reduced)` in component's details dropdown, or even `<mesh name> (reduced) (reduced)` and so on.)

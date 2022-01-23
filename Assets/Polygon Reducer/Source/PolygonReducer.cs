@@ -23,6 +23,9 @@ namespace MarcosPereira.MeshManipulation {
         [SerializeField, HideInInspector]
         private List<MeshData> meshData;
 
+        [SerializeField]
+        private List<ExtendedMeshInfo> details;
+
         private Coroutine inspectorCoroutine;
 
         // Debugging fields
@@ -78,16 +81,22 @@ namespace MarcosPereira.MeshManipulation {
 
                 // Populate original meshes
                 this.meshData = this.LoadMeshes();
+
+                this.details = new List<ExtendedMeshInfo>();
             }
 
             // TODO: Get extended meshes in Populate() instead once they are
             // serialized.
+
+            this.details.Clear();
 
             foreach (MeshData meshData in this.meshData) {
                 meshData.extendedMesh =
                     PolygonReducer.GetExtendedMesh(meshData.originalMesh);
                 meshData.extendedMeshInfo =
                     new ExtendedMeshInfo(meshData.extendedMesh);
+
+                this.details.Add(meshData.extendedMeshInfo);
             }
 
             // Use a coroutine instead of Update() for efficiency - once we want
@@ -122,6 +131,7 @@ namespace MarcosPereira.MeshManipulation {
             }
 
             // Clear mesh data
+            this.details.Clear();
             this.meshData.Clear();
         }
 
@@ -139,6 +149,8 @@ namespace MarcosPereira.MeshManipulation {
                     continue;
                 }
 
+                this.details.Clear();
+
                 foreach (MeshData meshData in this.meshData) {
                     // TODO: This generates a lot of memory garbage :/
                     meshData.reducedMesh =
@@ -153,6 +165,8 @@ namespace MarcosPereira.MeshManipulation {
 
                     meshData.extendedMeshInfo =
                         new ExtendedMeshInfo(meshData.extendedMesh);
+
+                    this.details.Add(meshData.extendedMeshInfo);
                 }
 
                 lastReductionPercent = this.reductionPercent;

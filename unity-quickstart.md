@@ -10,3 +10,7 @@
 ## Settings to set
 
 * IL2CPP
+
+## TODO
+
+* Create repo and fork it as necessary. (Is forking the best way to go about it?)
