@@ -7,3 +7,4 @@ The package can be found in the `Assets` folder.
 ## TODO
 
 * Fix occasional reduction of already reduced mesh (mesh shows up as `<mesh name> (reduced)` in component's details dropdown, or even `<mesh name> (reduced) (reduced)` and so on.)
+* Sphere should have no seams, but has?
