@@ -9,9 +9,8 @@ namespace MarcosPereira.MeshManipulation {
         // Keep a static dictionary with original Mesh references, so that only
         // a single ExtendedMesh is created for each Mesh even if this script
         // is present in multiple gameobjects with the same mesh.
-        private static readonly Dictionary<
-            Mesh, ExtendedMesh
-        > extendedMeshCache = new Dictionary<Mesh, ExtendedMesh>();
+        private static readonly Dictionary<Mesh, ExtendedMesh> extendedMeshCache =
+            new Dictionary<Mesh, ExtendedMesh>();
 
         [Range(0f, 100f)]
         [Tooltip(
@@ -36,20 +35,6 @@ namespace MarcosPereira.MeshManipulation {
         )]
         private bool highlightSeams = false;
 
-        // When entering play mode, editor scripts see serialized values of an
-        // enabled state in OnEnable(). To avoid running OnEnable() logic on
-        // values corresponding to an already enabled state, we keep track of
-        // enabled state here. Serializing this field is critical.
-        // OnEnable() will see this value as true right before the
-        // EnteredEditMode event is triggered.
-        // Forum thread here:
-        // https://forum.unity.com/threads/onenable-sees-serialized-values-of-enabled-state-on-monobehaviour-with-executealways.1198969/
-        // More info at:
-        // https://docs.unity3d.com/2021.2/Documentation/Manual/ConfigurableEnterPlayModeDetails.html
-        // https://docs.unity3d.com/2021.2/Documentation/Manual/ConfigurableEnterPlayMode.html
-        [SerializeField, HideInInspector]
-        private bool isInitialized = false;
-
         public void OnDrawGizmos() {
             if (this.highlightSeams) {
                 foreach (MeshData m in this.meshData) {
@@ -68,37 +53,27 @@ namespace MarcosPereira.MeshManipulation {
             }
         }
 
-        public void OnEnable() {
-            if (this.DisableIfDuplicate()) {
+        // We used to reduce meshes in OnEnable and restore them in OnDisable, but there were
+        // multiple issues with this. When entering play mode, OnEnable sees an already enabled
+        // state after deserialization. Additionally, when polygon reducer is enabled on a prefab,
+        // and the folder that prefab is in is renamed, OnEnable sees the already reduced mesh in
+        // the mesh filter or skinned mesh renderer's sharedMesh - even if OnDisable restored it
+        // to its original.
+        public void Awake() {
+            if (this.DestroyIfDuplicate()) {
                 return;
             }
 
-            // When entering play mode, we see serialized values of an enabled
-            // state. We do not fetch and reduce meshes then, or we will be
-            // reducing already reduced meshes.
-            if (!this.isInitialized) {
-                this.isInitialized = true;
+            this.meshData = this.GetMeshData();
 
-                // Populate original meshes
-                this.meshData = this.LoadMeshes();
-
-                this.details = new List<ExtendedMeshInfo>();
-            }
-
-            // TODO: Get extended meshes in Populate() instead once they are
-            // serialized.
-
-            this.details.Clear();
+            this.details = new List<ExtendedMeshInfo>();
 
             foreach (MeshData meshData in this.meshData) {
-                meshData.extendedMesh =
-                    PolygonReducer.GetExtendedMesh(meshData.originalMesh);
-                meshData.extendedMeshInfo =
-                    new ExtendedMeshInfo(meshData.extendedMesh);
-
                 this.details.Add(meshData.extendedMeshInfo);
             }
+        }
 
+        public void OnEnable() {
             // Use a coroutine instead of Update() for efficiency - once we want
             // to stop updating the mesh we can simply stop the coroutine, while
             // removing the overhead of Update() completely seems impossible.
@@ -111,28 +86,10 @@ namespace MarcosPereira.MeshManipulation {
         }
 
         public void OnDisable() {
-            if (!this.isInitialized) {
-                // Happens when this component is disabled in OnEnable() due to
-                // being a duplicate.
-                return;
-            }
-
-            this.isInitialized = false;
-
-            // Restore original meshes, unless the reduced mesh has been
-            // replaced in the meantime.
-            foreach (MeshData meshData in this.meshData) {
-                this.RestoreMesh(meshData);
-            }
-
             // Stop coroutine
             if (this.inspectorCoroutine != null) {
                 this.StopCoroutine(this.inspectorCoroutine);
             }
-
-            // Clear mesh data
-            this.details.Clear();
-            this.meshData.Clear();
         }
 
         public IEnumerator Monitor() {
@@ -173,7 +130,7 @@ namespace MarcosPereira.MeshManipulation {
             }
         }
 
-        private bool DisableIfDuplicate() {
+        private bool DestroyIfDuplicate() {
             var existing = new List<PolygonReducer>();
 
             existing.AddRange(
@@ -198,17 +155,17 @@ namespace MarcosPereira.MeshManipulation {
 
             Debug.LogError(
                 "Only one PolygonReducer per object hierarchy is supported. " +
-                "Please disable the PolygonReducer component on " +
-                $"\"{containing.name}\" before enabling it on " +
+                "Please remove the PolygonReducer component from " +
+                $"\"{containing.name}\" before adding it to " +
                 $"\"{this.gameObject.name}\"."
             );
 
-            this.enabled = false;
+            GameObject.Destroy(this);
 
             return true;
         }
 
-        private List<MeshData> LoadMeshes() {
+        private List<MeshData> GetMeshData() {
             var meshData = new List<MeshData>();
 
             static void logReadWriteError(string meshName) =>
@@ -218,21 +175,43 @@ namespace MarcosPereira.MeshManipulation {
                     "checkbox in the mesh's import settings."
                 );
 
+            static MeshData F(Mesh mesh) {
+                if (!mesh.isReadable) {
+                    logReadWriteError(mesh.name);
+                    return null;
+                }
+
+                if (mesh.name.Contains("(reduced)")) {
+                    Debug.LogWarning(
+                        "Polygon Reducer: Skipping mesh with \"(reduced)\" in name. " +
+                        "Reducing an already reduced mesh makes it impossible to undo the " +
+                        "reduction to less than the current level. If this is happening in a " +
+                        "prefab, try resetting it."
+                    );
+
+                    return null;
+                }
+
+                ExtendedMesh extendedMesh = PolygonReducer.GetExtendedMesh(mesh);
+
+                return new MeshData() {
+                    extendedMesh = extendedMesh,
+                    extendedMeshInfo = new ExtendedMeshInfo(extendedMesh)
+                };
+            }
+
             MeshFilter[] meshFilters = this.gameObject
                 .GetComponentsInChildren<MeshFilter>(includeInactive: true);
 
             foreach (MeshFilter meshFilter in meshFilters) {
-                Mesh mesh = meshFilter.sharedMesh;
+                MeshData item = F(meshFilter.sharedMesh);
 
-                if (!mesh.isReadable) {
-                    logReadWriteError(mesh.name);
+                if (item == null) {
                     continue;
                 }
 
-                meshData.Add(new MeshData() {
-                    originalMesh = mesh,
-                    meshFilter = meshFilter
-                });
+                item.meshFilter = meshFilter;
+                meshData.Add(item);
             }
 
             SkinnedMeshRenderer[] skinnedMeshRenderers = this.gameObject
@@ -240,54 +219,18 @@ namespace MarcosPereira.MeshManipulation {
                     includeInactive: true
                 );
 
-            foreach (SkinnedMeshRenderer x in skinnedMeshRenderers) {
-                Mesh mesh = x.sharedMesh;
+            foreach (SkinnedMeshRenderer skinnedMeshRenderer in skinnedMeshRenderers) {
+                MeshData item = F(skinnedMeshRenderer.sharedMesh);
 
-                if (!mesh.isReadable) {
-                    logReadWriteError(mesh.name);
+                if (item == null) {
                     continue;
                 }
 
-                meshData.Add(new MeshData() {
-                    originalMesh = mesh,
-                    skinnedMeshRenderer = x
-                });
+                item.skinnedMeshRenderer = skinnedMeshRenderer;
+                meshData.Add(item);
             }
 
             return meshData;
-        }
-
-        private void RestoreMesh(MeshData meshData) {
-            string errorMessage =
-                "Polygon Reducer: Did not restore mesh " +
-                $"\"{meshData.originalMesh.name}\"" +
-                " as it has been replaced after having been optimized.";
-
-            if (meshData.meshFilter != null) {
-                MeshFilter f = meshData.meshFilter;
-
-                if (
-                    f.sharedMesh.GetInstanceID() ==
-                        meshData.reducedMesh.GetInstanceID()
-                ) {
-                    f.sharedMesh = meshData.originalMesh;
-                } else {
-                    Debug.LogError(errorMessage);
-                }
-            } else if (meshData.skinnedMeshRenderer != null) {
-                SkinnedMeshRenderer r = meshData.skinnedMeshRenderer;
-
-                if (
-                    r.sharedMesh.GetInstanceID() ==
-                        meshData.reducedMesh.GetInstanceID()
-                ) {
-                    r.sharedMesh = meshData.originalMesh;
-                } else {
-                    Debug.LogError(errorMessage);
-                }
-            } else {
-                throw new System.Exception("Unexpected null components.");
-            }
         }
 
         private static ExtendedMesh GetExtendedMesh(Mesh mesh) {

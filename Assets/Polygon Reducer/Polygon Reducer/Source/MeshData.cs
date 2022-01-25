@@ -6,7 +6,6 @@ namespace MarcosPereira.MeshManipulation {
     public class MeshData {
         public SkinnedMeshRenderer skinnedMeshRenderer;
         public MeshFilter meshFilter;
-        public Mesh originalMesh;
         public Mesh reducedMesh;
         public ExtendedMesh extendedMesh;
         public ExtendedMeshInfo extendedMeshInfo;
