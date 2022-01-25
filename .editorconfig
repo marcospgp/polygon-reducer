@@ -88,7 +88,7 @@ dotnet_diagnostic.IDE0090.severity = none
 # Note it's still possible to set the severity of any analyzer using
 # "dotnet_diagnostic.RCSxxxx.severity".
 
-roslynator.max_line_length=80
+roslynator.max_line_length = 100
 
 # Add newline after expression-body arrow instead of before it
 roslynator.RCS0032.invert = true
