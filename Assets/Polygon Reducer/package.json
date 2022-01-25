@@ -1,6 +1,6 @@
 {
     "name": "me.marcospereira.polygon-reducer",
-    "version": "1.0.2",
+    "version": "0.0.0",
     "displayName": "Polygon Reducer",
     "description": "Reduce the vertex count of meshes in real time by dragging a slider.",
     "author": {

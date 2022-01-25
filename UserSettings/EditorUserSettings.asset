@@ -6,22 +6,22 @@ EditorUserSettings:
   serializedVersion: 4
   m_ConfigSettings:
     RecentlyUsedScenePath-0:
-      value: 224247031146466b020215251f2d1f2213130d29293a691535281023eee57b1af7ee3afdaa33317c0b32a1290a371526
-      flags: 0
-    RecentlyUsedScenePath-1:
-      value: 224247031146466b020215251f2d1f2213130d29293a691535281023eee57b0dd0d778fce9332b25
-      flags: 0
-    RecentlyUsedScenePath-2:
       value: 3350570d04520c484203096c1d224d131904082f3e2d2f222c670d3ceef93337ecaa24ece32f3c392b4dca2405331133f7452b1eff071e461800bd3c21b1051d18d101
       flags: 0
-    RecentlyUsedScenePath-3:
+    RecentlyUsedScenePath-1:
       value: 3350570d04520c484203096c1d224d131904082f3e2d2f222c670d3ceef93337ecaa24ece32f3c392b4dca2405331133f7453c39c6451f05181ae4
       flags: 0
-    RecentlyUsedScenePath-4:
+    RecentlyUsedScenePath-2:
       value: 22424703114646760c020e2702301f31181e152b3821293e3e663c3debed3534f1a706e8e4312c736953af1a0b2c042ce64a390af500453c1e02fb4126f01c1551e719d61f883b19c61652dbc314c5fa
       flags: 0
-    RecentlyUsedScenePath-5:
+    RecentlyUsedScenePath-3:
       value: 22424703114646680e0b0227036c6c111b07142f1f2b233e2867083debf42d
+      flags: 0
+    RecentlyUsedScenePath-4:
+      value: 224247031146466b020215251f2d1f2213130d29293a691535281023eee57b0dd0d778fce9332b25
+      flags: 0
+    RecentlyUsedScenePath-5:
+      value: 224247031146466b020215251f2d1f2213130d29293a691535281023eee57b1af7ee3afdaa33317c0b32a1290a371526
       flags: 0
     UIBuilder.EditorExtensionModeKey:
       value: 37434103
