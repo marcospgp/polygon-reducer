@@ -9,6 +9,7 @@ namespace MarcosPereira.MeshManipulation {
         // Keep a static dictionary with original Mesh references, so that only
         // a single ExtendedMesh is created for each Mesh even if this script
         // is present in multiple gameobjects with the same mesh.
+        // TODO: handle serialization of this thing
         private static readonly Dictionary<Mesh, ExtendedMesh> extendedMeshCache =
             new Dictionary<Mesh, ExtendedMesh>();
 
@@ -238,7 +239,7 @@ namespace MarcosPereira.MeshManipulation {
                 !PolygonReducer.extendedMeshCache
                     .TryGetValue(mesh, out ExtendedMesh extendedMesh)
             ) {
-                extendedMesh = new ExtendedMesh(mesh);
+                extendedMesh = ExtendedMesh.Create(mesh);
                 PolygonReducer.extendedMeshCache.Add(mesh, extendedMesh);
             }
 

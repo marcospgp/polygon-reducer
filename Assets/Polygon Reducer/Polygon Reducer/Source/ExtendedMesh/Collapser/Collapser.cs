@@ -2,18 +2,29 @@ using UnityEngine;
 using System.Collections.Generic;
 
 namespace MarcosPereira.MeshManipulation {
-    public class Collapser {
-        private readonly ExtendedMesh m;
-        private readonly Costs costs;
-        private readonly List<CollapseStep> collapseSteps =
-            new List<CollapseStep>();
+    public class Collapser : ScriptableObject {
+        [SerializeField]
+        private ExtendedMesh m;
+
+        [SerializeField]
+        private Costs costs;
+
+        [SerializeField]
+        private List<CollapseStep> collapseSteps = new List<CollapseStep>();
+
+        [SerializeField]
         private int lastAppliedCollapseStep = -1;
 
-        public Collapser(ExtendedMesh m) {
-            this.m = m;
+        // Used in place of constructor, since this is a ScriptableObject
+        public static Collapser Create(ExtendedMesh m) {
+            Collapser collapser = ScriptableObject.CreateInstance<Collapser>();
+
+            collapser.m = m;
 
             // Calculate initial collapse costs.
-            this.costs = this.GetInitialCollapseCosts();
+            collapser.costs = collapser.GetInitialCollapseCosts();
+
+            return collapser;
         }
 
         /// <summary>
@@ -83,7 +94,9 @@ namespace MarcosPereira.MeshManipulation {
         private void ApplyNewCollapseStep() {
             Edge minCostEdge = this.costs.PopMinimumCost();
 
-            var step = new CollapseStep(
+            CollapseStep step = ScriptableObject.CreateInstance<CollapseStep>();
+
+            step.Initialize(
                 this.m,
                 minCostEdge.fromVertex,
                 minCostEdge.toVertex

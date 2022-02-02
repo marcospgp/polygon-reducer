@@ -4,37 +4,65 @@ using UnityEngine.Rendering;
 using Unity.Collections;
 
 namespace MarcosPereira.MeshManipulation {
-    public class ExtendedMesh {
+    public class ExtendedMesh : ScriptableObject {
         // Cached vertices of original mesh.
         public Vector3[] vertices;
+
         // Contains indices of vertices that have been deleted.
         public HashSet<int> deletedVertices = new HashSet<int>();
+        [SerializeField]
+        private List<int> serializableDeletedVertices;
+
         // Holds mesh triangles, including all submeshes.
         // Vertex indices will be modified.
         public int[] triangles;
+
         // Contains indices of triangles that have been deleted.
         public HashSet<int> deletedTriangles = new HashSet<int>();
+        [SerializeField]
+        private List<int> serializableDeletedTriangles;
+
         // Holds triangle normals, which have nothing to do with vertex normals.
         public Dictionary<int, Vector3> triangleNormals;
+        [SerializeField]
+        private List<int> serializableTriangleNormalKeys;
+        [SerializeField]
+        private List<Vector3> serializableTriangleNormals;
+
         // For each vertex, holds the indices of vertices it is connected to
         // by some triangle.
         public HashSet<int>[] neighborVertices;
+        [SerializeField]
+        private List<int>[] serializableNeighborVertices;
+
         // For each vertex, holds the indices of triangles it is a part of.
         public HashSet<int>[] adjacentTriangles;
+        [SerializeField]
+        private List<int>[] serializableAdjacentTriangles;
+
         // Holds the indices of vertices that should not be moved to prevent
         // gaps on mesh surface.
         public HashSet<int> seams;
+        [SerializeField]
+        private List<int> serializableSeams;
 
         // Original mesh. Points to a mesh asset, so do not modify it directly!
         // Do not read vertices or triangles through it either - use
         // this.vertices or this.triangles instead as that is more efficient.
-        public readonly Mesh originalMesh;
-        // A collapser object, in charge of reducing polygons of this mesh.
-        private readonly Collapser collapser;
+        public Mesh originalMesh;
 
-        public ExtendedMesh(Mesh mesh) {
-            this.originalMesh = mesh;
-            this.vertices = mesh.vertices;
+        // A collapser object, in charge of reducing polygons of this mesh.
+        [SerializeField]
+        private Collapser collapser;
+
+        // Factory method used in place of constructor as this is a
+        // ScriptableObject
+        public static ExtendedMesh Create(Mesh mesh) {
+            ExtendedMesh m =
+                ScriptableObject.CreateInstance<ExtendedMesh>();
+
+            m.originalMesh = mesh;
+            m.vertices = mesh.vertices;
 
             // It is not explicitly stated that mesh.triangles contains each
             // submesh's triangles in the correct order, so we fetch them
@@ -46,14 +74,96 @@ namespace MarcosPereira.MeshManipulation {
                 triangles.AddRange(mesh.GetTriangles(i));
             }
 
-            this.triangles = triangles.ToArray();
+            m.triangles = triangles.ToArray();
 
-            (this.neighborVertices, this.adjacentTriangles) =
-                this.GetNeighbors();
+            (m.neighborVertices, m.adjacentTriangles) =
+                m.GetNeighbors();
 
-            this.triangleNormals = this.GetTriangleNormals();
-            this.seams = Seams.GetSeams(this);
-            this.collapser = new Collapser(this);
+            m.triangleNormals = m.GetTriangleNormals();
+            m.seams = Seams.GetSeams(m);
+
+            m.collapser = Collapser.Create(m);
+
+            return m;
+        }
+
+        public void OnBeforeSerialize() {
+            this.serializableDeletedVertices = new List<int>(this.deletedVertices);
+            this.deletedVertices = null;
+
+            this.serializableDeletedTriangles = new List<int>(this.deletedTriangles);
+            this.deletedTriangles = null;
+
+            this.serializableTriangleNormalKeys = new List<int>(this.triangleNormals.Keys);
+            this.serializableTriangleNormals = new List<Vector3>(this.triangleNormals.Values);
+            this.triangleNormals = null;
+
+            this.serializableNeighborVertices = new List<int>[this.neighborVertices.Length];
+
+            for (int i = 0; i < this.neighborVertices.Length; i++) {
+                HashSet<int> set = this.neighborVertices[i];
+                this.serializableNeighborVertices[i] = new List<int>(set);
+                this.neighborVertices[i] = null;
+            }
+
+            this.neighborVertices = null;
+
+            this.serializableAdjacentTriangles = new List<int>[this.adjacentTriangles.Length];
+
+            for (int i = 0; i < this.adjacentTriangles.Length; i++) {
+                HashSet<int> set = this.adjacentTriangles[i];
+                this.serializableAdjacentTriangles[i] = new List<int>(set);
+                this.adjacentTriangles[i] = null;
+            }
+
+            this.adjacentTriangles = null;
+
+            this.serializableSeams = new List<int>(this.seams);
+            this.seams = null;
+        }
+
+        public void OnAfterDeserialize() {
+            this.deletedVertices = new HashSet<int>(this.serializableDeletedVertices);
+            this.serializableDeletedVertices = null;
+
+            this.deletedTriangles = new HashSet<int>(this.serializableDeletedTriangles);
+            this.serializableDeletedTriangles = null;
+
+            int capacity = this.serializableTriangleNormals.Count;
+            this.triangleNormals = new Dictionary<int, Vector3>(capacity);
+
+            for (int i = 0; i < capacity; i++) {
+                this.triangleNormals.Add(
+                    this.serializableTriangleNormalKeys[i],
+                    this.serializableTriangleNormals[i]
+                );
+            }
+
+            this.serializableTriangleNormalKeys = null;
+            this.serializableTriangleNormals = null;
+
+            this.neighborVertices = new HashSet<int>[this.serializableNeighborVertices.Length];
+
+            for (int i = 0; i < this.serializableNeighborVertices.Length; i++) {
+                this.neighborVertices[i] =
+                    new HashSet<int>(this.serializableNeighborVertices[i]);
+                this.serializableNeighborVertices[i] = null;
+            }
+
+            this.serializableNeighborVertices = null;
+
+            this.adjacentTriangles = new HashSet<int>[this.serializableAdjacentTriangles.Length];
+
+            for (int i = 0; i < this.serializableAdjacentTriangles.Length; i++) {
+                this.adjacentTriangles[i] =
+                    new HashSet<int>(this.serializableAdjacentTriangles[i]);
+                this.serializableAdjacentTriangles[i] = null;
+            }
+
+            this.serializableAdjacentTriangles = null;
+
+            this.seams = new HashSet<int>(this.serializableSeams);
+            this.serializableSeams = null;
         }
 
         public Mesh GetMesh(float reductionPercent) {

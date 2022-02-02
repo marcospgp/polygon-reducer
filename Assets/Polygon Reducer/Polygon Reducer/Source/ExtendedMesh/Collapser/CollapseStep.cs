@@ -7,10 +7,11 @@ namespace MarcosPereira.MeshManipulation {
     /// applying it to an ExtendedMesh. This makes it easier to undo the collapse
     /// later.
     /// </summary>
-    public class CollapseStep {
-        public readonly int fromVertex;
-        public readonly int toVertex;
+    public class CollapseStep : ScriptableObject {
+        public int fromVertex;
+        public int toVertex;
         public HashSet<int> triangleDeletions = new HashSet<int>();
+        public List<int> serializable
 
         // Store previous and new normal vector so we can roll back if we want
         // to undo this step.
@@ -22,15 +23,16 @@ namespace MarcosPereira.MeshManipulation {
         public List<int> vertexReplacements =
             new List<int>();
 
-        private readonly ExtendedMesh extendedMesh;
+        private ExtendedMesh extendedMesh;
 
-        private readonly Dictionary<int, HashSet<int>>
+        private Dictionary<int, HashSet<int>>
             adjacentTriangleRemovals = new Dictionary<int, HashSet<int>>();
 
-        private readonly Dictionary<int, HashSet<int>>
+        private Dictionary<int, HashSet<int>>
             adjacentTriangleAdditions = new Dictionary<int, HashSet<int>>();
 
-        public CollapseStep(ExtendedMesh m, int fromVertex, int toVertex) {
+        // Used in place of constructor since this is a ScriptableObject
+        public void Initialize(ExtendedMesh m, int fromVertex, int toVertex) {
             this.extendedMesh = m;
             this.fromVertex = fromVertex;
             this.toVertex = toVertex;

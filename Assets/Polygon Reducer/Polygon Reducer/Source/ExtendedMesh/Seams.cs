@@ -114,8 +114,7 @@ namespace MarcosPereira.MeshManipulation {
             return null;
         }
 
-        // This method is designed to be recursive, hence the
-        // exotic parameter choice.
+        // This method is recursive, hence the exotic parameter choice.
         private static bool TryToCloseLoop(
             (int a, int b) loop,
             HashSet<int> trianglesInLoop,
