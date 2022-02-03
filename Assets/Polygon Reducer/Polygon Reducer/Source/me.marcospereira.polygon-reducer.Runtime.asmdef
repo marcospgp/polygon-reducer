@@ -1,7 +1,9 @@
 {
     "name": "me.marcospereira.polygon-reducer.Runtime",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:d48972d68397b4dad9c104a648f5a817"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

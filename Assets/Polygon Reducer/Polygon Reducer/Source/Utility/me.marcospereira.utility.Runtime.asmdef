@@ -1,10 +1,8 @@
 {
-    "name": "me.marcospereira.utility.Editor",
+    "name": "me.marcospereira.utility.Runtime",
     "rootNamespace": "",
     "references": [],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
