@@ -18,3 +18,7 @@ remove extendedmeshinfo now that everything is goddamn serializable
 fix extendedmeshcache (populate it in on enable?)
 
 fix serialization of nested (2D) structures. flatten and store flat list + list of sizes of sublists
+
+maybe create a custom class for serializable hashsets and such that handles the serialization/deserialization logic itself?
+
+review polygon reducer logic to see if extended meshes are only generated once
