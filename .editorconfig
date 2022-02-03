@@ -65,25 +65,11 @@ dotnet_diagnostic.IDE0083.severity = none
 # https://docs.unity3d.com/Manual/CSharpCompiler.html
 dotnet_diagnostic.IDE0090.severity = none
 
-# SA1633FileMustHaveHeader: The file header is missing or not located at the
-# top of the file.
-# dotnet_diagnostic.SA1633.severity = none
-
-# SA1600ElementsMustBeDocumented
-# dotnet_diagnostic.SA1600.severity = none
-
-# SA1500: Braces for multi-line statements should not share line
-# dotnet_diagnostic.SA1500.severity = none
-
-# Make field readonly (IDE0044)
-# (conflicts with using [SerializeField] on private fields to modify them
-# through the Unity inspector)
-# dotnet_diagnostic.IDE0044.severity = none
-
-# Use throw expression (IDE0016)
-# https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0016
-# Can't use ?? with Unity due to custom equality operator implementation
-# dotnet_diagnostic.IDE0016.severity = none
+# CA2201: Do not raise reserved exception types
+# It's fine to throw System.Exception when it's never supposed to be caught.
+# Maybe in the future a custom ShouldNeverHappen exception could be used
+# instead.
+dotnet_diagnostic.CA2201.severity = none
 
 # Roslynator
 # https://github.com/JosefPihrt/Roslynator
