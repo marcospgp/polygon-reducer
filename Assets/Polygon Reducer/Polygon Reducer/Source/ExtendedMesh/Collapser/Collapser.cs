@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
     public class Collapser : ScriptableObject {
@@ -35,7 +36,7 @@ namespace MarcosPereira.MeshManipulation {
         public void SetQuality(float reductionFactor) {
             int vertexCount = this.m.vertices.Length;
 
-            int currentVertexCount = vertexCount - this.m.deletedVertices.Count;
+            int currentVertexCount = vertexCount - this.m.deletedVertices.count;
             int targetVertexCount = this.GetTargetVertexCount(reductionFactor);
 
             if (currentVertexCount > targetVertexCount) {
@@ -43,7 +44,7 @@ namespace MarcosPereira.MeshManipulation {
                 // calculated ones if available, until target vertex count is
                 // reached.
                 while (
-                    vertexCount - this.m.deletedVertices.Count >
+                    vertexCount - this.m.deletedVertices.count >
                     targetVertexCount
                 ) {
                     if (
@@ -60,7 +61,7 @@ namespace MarcosPereira.MeshManipulation {
                 // we have run out of collapses to undo.
                 while (
                     this.lastAppliedCollapseStep > -1 &&
-                    vertexCount - this.m.deletedVertices.Count <
+                    vertexCount - this.m.deletedVertices.count <
                     targetVertexCount
                 ) {
                     this.UndoCollapseStep();
@@ -70,7 +71,7 @@ namespace MarcosPereira.MeshManipulation {
 
         private int GetTargetVertexCount(float reductionFactor) {
             int vertexCount = this.m.vertices.Length;
-            int untouchableCount = this.m.seams.Count;
+            int untouchableCount = this.m.seams.count;
             int touchableCount = vertexCount - untouchableCount;
             float keepFactor = 1f - reductionFactor;
 
@@ -123,10 +124,10 @@ namespace MarcosPereira.MeshManipulation {
         }
 
         private Costs GetInitialCollapseCosts() {
-            var costs = new Costs();
+            var costs = Costs.Create();
 
             // Seams are untouchable - we don't want to open holes in the mesh.
-            HashSet<int> untouchableVertices = this.m.seams;
+            SerializableHashSet<int> untouchableVertices = this.m.seams;
 
             int vertexCount = this.m.vertices.Length;
             for (int u = 0; u < vertexCount; u++) {
@@ -150,11 +151,11 @@ namespace MarcosPereira.MeshManipulation {
         }
 
         private (float, int) GetCostAtVertex(int u) {
-            HashSet<int> uTriangles = this.m.adjacentTriangles[u];
+            SerializableHashSet<int> uTriangles = this.m.adjacentTriangles[u];
             int[] triangles = this.m.triangles;
 
             // u is a vertex all by itself, signal for deletion
-            if (uTriangles.Count == 0) {
+            if (uTriangles.count == 0) {
                 return (-1f, -1);
             }
 
@@ -216,7 +217,7 @@ namespace MarcosPereira.MeshManipulation {
             Vector3 uPos = this.m.vertices[u];
             Vector3 vPos = this.m.vertices[v];
 
-            HashSet<int> uTriangles = this.m.adjacentTriangles[u];
+            SerializableHashSet<int> uTriangles = this.m.adjacentTriangles[u];
             int[] triangles = this.m.triangles;
 
             float edgeLength = (vPos - uPos).magnitude;

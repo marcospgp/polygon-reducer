@@ -71,6 +71,10 @@ dotnet_diagnostic.IDE0090.severity = none
 # instead.
 dotnet_diagnostic.CA2201.severity = none
 
+# CA1000: Do not declare static members on generic types
+# Stupidly restrictive
+dotnet_diagnostic.CA1000.severity = none
+
 # Roslynator
 # https://github.com/JosefPihrt/Roslynator
 #

@@ -3,16 +3,21 @@ using UnityEngine;
 using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
-    public class Costs {
-        // TODO: serializable sorted set
-        private SerializableSortedSet<Edge> costs = new SortedSet<Edge>();
-        private readonly Dictionary<int, float> costByVertex;
+    public class Costs : ScriptableObject {
+        [SerializeField]
+        private SerializableSortedSet<Edge> costs;
 
-        public int count => this.costs.Count;
+        [SerializeField]
+        private SerializableDictionary<int, float> costByVertex;
 
-        public Costs() {
-            this.costs = new SortedSet<Edge>(Costs.CostComparer());
-            this.costByVertex = new Dictionary<int, float>();
+        // Used in place of constructor, since this is a ScriptableObject
+        public static Costs Create() {
+            Costs instance = ScriptableObject.CreateInstance<Costs>();
+
+            instance.costs = SerializableSortedSet<Edge>.Create(Costs.CostComparer());
+            instance.costByVertex = SerializableDictionary<int, float>.Create();
+
+            return instance;
         }
 
         public void Add(Edge edge) {
@@ -42,7 +47,7 @@ namespace MarcosPereira.MeshManipulation {
         }
 
         public Edge PopMinimumCost() {
-            Edge min = this.costs.Min;
+            Edge min = this.costs.min;
 
             if (!this.costs.Remove(min)) {
                 Debug.LogError(
