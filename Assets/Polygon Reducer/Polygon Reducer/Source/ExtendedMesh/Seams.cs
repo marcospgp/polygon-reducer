@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
     public static class Seams {
         // Get seam vertices of a given mesh. These should not be manipulated to
         // avoid creating holes in the mesh.
-        public static HashSet<int> GetSeams(ExtendedMesh m) {
-            var seamVertices = new HashSet<int>();
+        public static SerializableHashSet<int> GetSeams(ExtendedMesh m) {
+            var seamVertices = SerializableHashSet<int>.Create();
 
             // Allocate a working list here to avoid creating a new one for each
             // vertex (which would produce a lot of garbage).
@@ -35,9 +36,9 @@ namespace MarcosPereira.MeshManipulation {
             // We iterate over the vertex's adjacent triangles and connect them
             // together trying to close a loop.
 
-            HashSet<int> vTriangles = m.adjacentTriangles[v];
+            SerializableHashSet<int> vTriangles = m.adjacentTriangles[v];
 
-            if (vTriangles.Count < 3) {
+            if (vTriangles.count < 3) {
                 return true;
             }
 

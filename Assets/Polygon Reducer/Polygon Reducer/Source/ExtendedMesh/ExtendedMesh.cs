@@ -2,49 +2,36 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Unity.Collections;
 using System.Collections.Generic;
+using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
-    public class ExtendedMesh : ScriptableObject, ISerializationCallbackReceiver {
+    public class ExtendedMesh : ScriptableObject {
         // Cached vertices of original mesh.
         public Vector3[] vertices;
 
         // Contains indices of vertices that have been deleted.
-        public HashSet<int> deletedVertices = new HashSet<int>();
-        [SerializeField]
-        private List<int> serializableDeletedVertices;
+        public SerializableHashSet<int> deletedVertices;
 
         // Holds mesh triangles, including all submeshes.
         // Vertex indices will be modified.
         public int[] triangles;
 
         // Contains indices of triangles that have been deleted.
-        public HashSet<int> deletedTriangles = new HashSet<int>();
-        [SerializeField]
-        private List<int> serializableDeletedTriangles;
+        public SerializableHashSet<int> deletedTriangles;
 
         // Holds triangle normals, which have nothing to do with vertex normals.
-        public Dictionary<int, Vector3> triangleNormals;
-        [SerializeField]
-        private List<int> serializableTriangleNormalKeys;
-        [SerializeField]
-        private List<Vector3> serializableTriangleNormals;
+        public SerializableDictionary<int, Vector3> triangleNormals;
 
         // For each vertex, holds the indices of vertices it is connected to
         // by some triangle.
-        public HashSet<int>[] neighborVertices;
-        [SerializeField]
-        private List<int>[] serializableNeighborVertices;
+        public SerializableHashSet<int>[] neighborVertices;
 
         // For each vertex, holds the indices of triangles it is a part of.
-        public HashSet<int>[] adjacentTriangles;
-        [SerializeField]
-        private List<int>[] serializableAdjacentTriangles;
+        public SerializableHashSet<int>[] adjacentTriangles;
 
         // Holds the indices of vertices that should not be moved to prevent
         // gaps on mesh surface.
-        public HashSet<int> seams;
-        [SerializeField]
-        private List<int> serializableSeams;
+        public SerializableHashSet<int> seams;
 
         // Original mesh. Points to a mesh asset, so do not modify it directly!
         // Do not read vertices or triangles through it either - use
@@ -87,85 +74,6 @@ namespace MarcosPereira.MeshManipulation {
             return m;
         }
 
-        public void OnBeforeSerialize() {
-            this.serializableDeletedVertices = new List<int>(this.deletedVertices);
-            this.deletedVertices = null;
-
-            this.serializableDeletedTriangles = new List<int>(this.deletedTriangles);
-            this.deletedTriangles = null;
-
-            this.serializableTriangleNormalKeys = new List<int>(this.triangleNormals.Keys);
-            this.serializableTriangleNormals = new List<Vector3>(this.triangleNormals.Values);
-            this.triangleNormals = null;
-
-            this.serializableNeighborVertices = new List<int>[this.neighborVertices.Length];
-
-            for (int i = 0; i < this.neighborVertices.Length; i++) {
-                HashSet<int> set = this.neighborVertices[i];
-                this.serializableNeighborVertices[i] = new List<int>(set);
-                this.neighborVertices[i] = null;
-            }
-
-            this.neighborVertices = null;
-
-            this.serializableAdjacentTriangles = new List<int>[this.adjacentTriangles.Length];
-
-            for (int i = 0; i < this.adjacentTriangles.Length; i++) {
-                HashSet<int> set = this.adjacentTriangles[i];
-                this.serializableAdjacentTriangles[i] = new List<int>(set);
-                this.adjacentTriangles[i] = null;
-            }
-
-            this.adjacentTriangles = null;
-
-            this.serializableSeams = new List<int>(this.seams);
-            this.seams = null;
-        }
-
-        public void OnAfterDeserialize() {
-            this.deletedVertices = new HashSet<int>(this.serializableDeletedVertices);
-            this.serializableDeletedVertices = null;
-
-            this.deletedTriangles = new HashSet<int>(this.serializableDeletedTriangles);
-            this.serializableDeletedTriangles = null;
-
-            int capacity = this.serializableTriangleNormals.Count;
-            this.triangleNormals = new Dictionary<int, Vector3>(capacity);
-
-            for (int i = 0; i < capacity; i++) {
-                this.triangleNormals.Add(
-                    this.serializableTriangleNormalKeys[i],
-                    this.serializableTriangleNormals[i]
-                );
-            }
-
-            this.serializableTriangleNormalKeys = null;
-            this.serializableTriangleNormals = null;
-
-            this.neighborVertices = new HashSet<int>[this.serializableNeighborVertices.Length];
-
-            for (int i = 0; i < this.serializableNeighborVertices.Length; i++) {
-                this.neighborVertices[i] =
-                    new HashSet<int>(this.serializableNeighborVertices[i]);
-                this.serializableNeighborVertices[i] = null;
-            }
-
-            this.serializableNeighborVertices = null;
-
-            this.adjacentTriangles = new HashSet<int>[this.serializableAdjacentTriangles.Length];
-
-            for (int i = 0; i < this.serializableAdjacentTriangles.Length; i++) {
-                this.adjacentTriangles[i] =
-                    new HashSet<int>(this.serializableAdjacentTriangles[i]);
-                this.serializableAdjacentTriangles[i] = null;
-            }
-
-            this.serializableAdjacentTriangles = null;
-
-            this.seams = new HashSet<int>(this.serializableSeams);
-            this.serializableSeams = null;
-        }
-
         public Mesh GetMesh(float reductionPercent) {
             if (reductionPercent < 0 || reductionPercent > 100f) {
                 Debug.LogWarning(
@@ -186,7 +94,8 @@ namespace MarcosPereira.MeshManipulation {
         // recalculating, but it didn't work and may require a lot of additional
         // computation.
         public void RecalculateNeighborVertices(int vertex) {
-            this.neighborVertices[vertex] = new HashSet<int>();
+            this.neighborVertices[vertex] = SerializableHashSet<int>.Create();
+
             foreach (int t in this.adjacentTriangles[vertex]) {
                 for (int i = 0; i < 3; i++) {
                     int x = this.triangles[t + i];
@@ -227,7 +136,7 @@ namespace MarcosPereira.MeshManipulation {
 
         private Mesh GetMesh() {
             int newVertexCount =
-                this.vertices.Length - this.deletedVertices.Count;
+                this.vertices.Length - this.deletedVertices.count;
 
             var newVertices = new Vector3[newVertexCount];
 
@@ -457,10 +366,10 @@ namespace MarcosPereira.MeshManipulation {
             }
         }
 
-        private (HashSet<int>[], HashSet<int>[]) GetNeighbors() {
+        private (SerializableHashSet<int>[], SerializableHashSet<int>[]) GetNeighbors() {
             int vertexCount = this.vertices.Length;
-            var neighborVertices = new HashSet<int>[vertexCount];
-            var adjacentTriangles = new HashSet<int>[vertexCount];
+            var neighborVertices = new SerializableHashSet<int>[vertexCount];
+            var adjacentTriangles = new SerializableHashSet<int>[vertexCount];
 
             int triangleCount = this.triangles.Length;
             for (int i = 0; i < triangleCount; i += 3) {
@@ -471,7 +380,7 @@ namespace MarcosPereira.MeshManipulation {
                     // triangle
 
                     if (neighborVertices[v] == null) {
-                        neighborVertices[v] = new HashSet<int>();
+                        neighborVertices[v] = SerializableHashSet<int>.Create();
                     }
 
                     for (int k = 0; k < 3; k++) {
@@ -485,7 +394,8 @@ namespace MarcosPereira.MeshManipulation {
                     // Add triangle to current vertex's adjacent triangles
 
                     if (adjacentTriangles[v] == null) {
-                        adjacentTriangles[v] = new HashSet<int>();
+                        adjacentTriangles[v] =
+                            SerializableHashSet<int>.Create();
                     }
 
                     _ = adjacentTriangles[v].Add(i);
@@ -500,8 +410,8 @@ namespace MarcosPereira.MeshManipulation {
         // the start, we don't make it an array because then it would need to
         // be accessed with triangleNormals[t / 3] where t is the triangle
         // index. This is easily forgotten.
-        private Dictionary<int, Vector3> GetTriangleNormals() {
-            var normals = new Dictionary<int, Vector3>();
+        private SerializableDictionary<int, Vector3> GetTriangleNormals() {
+            var normals = SerializableDictionary<int, Vector3>.Create();
 
             for (int i = 0; i < this.triangles.Length; i += 3) {
                 normals[i] = this.GetTriangleNormal(i);

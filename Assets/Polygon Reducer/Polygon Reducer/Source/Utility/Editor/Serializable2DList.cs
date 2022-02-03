@@ -19,6 +19,8 @@ namespace MarcosPereira.Utility {
             return instance;
         }
 
+        public int count => this.items.Count;
+
         // Implement multidimensional indexer
         public T this[int i, int j] {
             get => this.items[i].items[j];

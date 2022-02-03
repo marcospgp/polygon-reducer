@@ -1,8 +1,10 @@
 {
-    "name": "me.marcospereira.polygon-reducer.Runtime",
+    "name": "me.marcospereira.utility.Editor",
     "rootNamespace": "",
     "references": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -1,8 +1,10 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MarcosPereira.Utility {
-    public class SerializableDictionary<K, V> : ScriptableObject, ISerializationCallbackReceiver {
+    public class SerializableDictionary<K, V> :
+    ScriptableObject, ISerializationCallbackReceiver, IEnumerable<KeyValuePair<K, V>> {
         private Dictionary<K, V> dictionary = new Dictionary<K, V>();
 
         [SerializeField]
@@ -31,12 +33,21 @@ namespace MarcosPereira.Utility {
             this.serializableValues = null;
         }
 
+        // Allow iterating over this class
+        IEnumerator<KeyValuePair<K, V>> IEnumerable<KeyValuePair<K, V>>.GetEnumerator() =>
+            this.dictionary.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() =>
+            this.dictionary.GetEnumerator();
+
         public static SerializableDictionary<K, V> Create() {
             SerializableDictionary<K, V> instance =
                 ScriptableObject.CreateInstance<SerializableDictionary<K, V>>();
 
             return instance;
         }
+
+        public int count => this.dictionary.Count;
 
         public void Add(K key, V value) => this.dictionary.Add(key, value);
 
