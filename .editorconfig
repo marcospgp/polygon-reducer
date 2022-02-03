@@ -75,6 +75,11 @@ dotnet_diagnostic.CA2201.severity = none
 # Stupidly restrictive
 dotnet_diagnostic.CA1000.severity = none
 
+# CA1051: Do not declare visible instance fields
+# Sometimes we want to have publicly accessible fields without having to declare
+# properties.
+dotnet_diagnostic.CA1051.severity = none
+
 # Roslynator
 # https://github.com/JosefPihrt/Roslynator
 #
