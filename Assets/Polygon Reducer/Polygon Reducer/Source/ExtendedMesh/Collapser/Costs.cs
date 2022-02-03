@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace MarcosPereira.MeshManipulation {
     public class Costs {
-        private readonly SortedSet<Edge> costs = new SortedSet<Edge>();
+        // TODO: serializable sorted set
+        private SortedSet<Edge> costs = new SortedSet<Edge>();
         private readonly Dictionary<int, float> costByVertex;
 
         public int count => this.costs.Count;

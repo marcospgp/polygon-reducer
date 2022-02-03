@@ -41,6 +41,8 @@ namespace MarcosPereira.Utility {
 
         public bool Add(T item) => this.hashSet.Add(item);
 
+        public bool Remove(T item) => this.hashSet.Remove(item);
+
         public bool Contains(T item) => this.hashSet.Contains(item);
     }
 }

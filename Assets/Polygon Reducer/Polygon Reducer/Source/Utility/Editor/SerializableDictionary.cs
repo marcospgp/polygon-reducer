@@ -47,13 +47,22 @@ namespace MarcosPereira.Utility {
             return instance;
         }
 
-        public int count => this.dictionary.Count;
-
-        public void Add(K key, V value) => this.dictionary.Add(key, value);
-
         public V this[K key] {
             get => this.dictionary[key];
             set => this.dictionary[key] = value;
         }
+
+        public int count => this.dictionary.Count;
+
+        public Dictionary<K, V>.KeyCollection keys => this.dictionary.Keys;
+        public Dictionary<K, V>.ValueCollection values =>
+            this.dictionary.Values;
+
+        public void Add(K key, V value) => this.dictionary.Add(key, value);
+
+        public bool Remove(K key) => this.dictionary.Remove(key);
+
+        public bool TryGetValue(K key, out V value) =>
+            this.dictionary.TryGetValue(key, out value);
     }
 }
