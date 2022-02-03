@@ -26,13 +26,13 @@ namespace MarcosPereira.MeshManipulation {
 
             this.originalVertexCount = vertexCount;
             this.reducedVertexCount =
-                vertexCount - extendedMesh.deletedVertices.Count;
+                vertexCount - extendedMesh.deletedVertices.count;
 
             this.originalTriangleCount = triangleCount;
             this.reducedTriangleCount =
-                triangleCount - extendedMesh.deletedTriangles.Count;
+                triangleCount - extendedMesh.deletedTriangles.count;
 
-            this.seamVertexCount = extendedMesh.seams.Count;
+            this.seamVertexCount = extendedMesh.seams.count;
         }
     }
 }
