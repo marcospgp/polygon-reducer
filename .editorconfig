@@ -46,6 +46,12 @@ dotnet_diagnostic.IDE0004.severity = none
 # IDE0021: Use expression body for constructors
 dotnet_diagnostic.IDE0021.severity = none
 
+# IDE0022: Use expression body for methods
+dotnet_diagnostic.IDE0022.severity = none
+
+# IDE0026: Use expression body for indexers
+dotnet_diagnostic.IDE0026.severity = none
+
 # IDE0045: Use conditional expression for assignment
 # We don't want to be forced to use ternary operator for assignments.
 dotnet_diagnostic.IDE0045.severity = none
