@@ -1,10 +1,10 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Unity.Collections;
+using System.Collections.Generic;
 
 namespace MarcosPereira.MeshManipulation {
-    public class ExtendedMesh : ScriptableObject {
+    public class ExtendedMesh : ScriptableObject, ISerializationCallbackReceiver {
         // Cached vertices of original mesh.
         public Vector3[] vertices;
 
