@@ -1,4 +1,5 @@
 namespace MarcosPereira.MeshManipulation {
+    [System.Serializable]
     public readonly struct Edge {
         public readonly float cost;
         public readonly int fromVertex;
