@@ -1,9 +1,11 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
-    public class Collapser : ScriptableObject {
+    [Serializable]
+    public class Collapser {
         [SerializeField]
         private ExtendedMesh m;
 
@@ -16,16 +18,11 @@ namespace MarcosPereira.MeshManipulation {
         [SerializeField]
         private int lastAppliedCollapseStep = -1;
 
-        // Used in place of constructor, since this is a ScriptableObject
-        public static Collapser Create(ExtendedMesh m) {
-            Collapser collapser = ScriptableObject.CreateInstance<Collapser>();
-
-            collapser.m = m;
+        public Collapser(ExtendedMesh m) {
+            this.m = m;
 
             // Calculate initial collapse costs.
-            collapser.costs = collapser.GetInitialCollapseCosts();
-
-            return collapser;
+            this.costs = this.GetInitialCollapseCosts();
         }
 
         /// <summary>

@@ -65,12 +65,6 @@ dotnet_diagnostic.IDE0083.severity = none
 # https://docs.unity3d.com/Manual/CSharpCompiler.html
 dotnet_diagnostic.IDE0090.severity = none
 
-# CA2201: Do not raise reserved exception types
-# It's fine to throw System.Exception when it's never supposed to be caught.
-# Maybe in the future a custom ShouldNeverHappen exception could be used
-# instead.
-dotnet_diagnostic.CA2201.severity = none
-
 # CA1000: Do not declare static members on generic types
 # Stupidly restrictive
 dotnet_diagnostic.CA1000.severity = none
@@ -79,6 +73,19 @@ dotnet_diagnostic.CA1000.severity = none
 # Sometimes we want to have publicly accessible fields without having to declare
 # properties.
 dotnet_diagnostic.CA1051.severity = none
+
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = none
+
+# CA1715: Identifiers should have correct prefix
+# Allow single-character generic type parameters that are not "T"
+dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
+
+# CA2201: Do not raise reserved exception types
+# It's fine to throw System.Exception when it's never supposed to be caught.
+# Maybe in the future a custom ShouldNeverHappen exception could be used
+# instead.
+dotnet_diagnostic.CA2201.severity = none
 
 # Roslynator
 # https://github.com/JosefPihrt/Roslynator

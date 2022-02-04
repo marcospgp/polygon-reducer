@@ -1,10 +1,15 @@
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace MarcosPereira.Utility {
-    public class SerializableSortedSet<T> :
-    ScriptableObject, ISerializationCallbackReceiver, IEnumerable<T> {
+    // This class is serializable but not a ScriptableObject, as Unity does not
+    // support generic ScriptableObjects.
+    // Keep in mind that custom classes have poorer serialization support.
+    // For example, shared references may become independent copies.
+    [Serializable]
+    public class SerializableSortedSet<T> : ISerializationCallbackReceiver, IEnumerable<T> {
         private SortedSet<T> sortedSet;
 
         [SerializeField]
@@ -30,29 +35,11 @@ namespace MarcosPereira.Utility {
         IEnumerator IEnumerable.GetEnumerator() =>
             this.sortedSet.GetEnumerator();
 
-        public static SerializableSortedSet<T> Create() {
-            SerializableSortedSet<T> instance =
-                ScriptableObject.CreateInstance<SerializableSortedSet<T>>();
-
-            instance.Initialize();
-
-            return instance;
-        }
-
-        public static SerializableSortedSet<T> Create(IComparer<T> comparer) {
-            SerializableSortedSet<T> instance =
-                ScriptableObject.CreateInstance<SerializableSortedSet<T>>();
-
-            instance.Initialize(comparer);
-
-            return instance;
-        }
-
-        public void Initialize() {
+        public SerializableSortedSet() {
             this.sortedSet = new SortedSet<T>();
         }
 
-        public void Initialize(IComparer<T> comparer) {
+        public SerializableSortedSet(IComparer<T> comparer) {
             this.sortedSet = new SortedSet<T>(comparer);
         }
 

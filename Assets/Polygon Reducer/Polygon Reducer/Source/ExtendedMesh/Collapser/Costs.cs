@@ -1,23 +1,20 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
-    public class Costs : ScriptableObject {
+    [Serializable]
+    public class Costs {
         [SerializeField]
         private SerializableSortedSet<Edge> costs;
 
         [SerializeField]
         private SerializableDictionary<int, float> costByVertex;
 
-        // Used in place of constructor, since this is a ScriptableObject
-        public static Costs Create() {
-            Costs instance = ScriptableObject.CreateInstance<Costs>();
-
-            instance.costs = SerializableSortedSet<Edge>.Create(Costs.CostComparer());
-            instance.costByVertex = SerializableDictionary<int, float>.Create();
-
-            return instance;
+        public Costs() {
+            this.costs = new SerializableSortedSet<Edge>(Costs.CostComparer());
+            this.costByVertex = new SerializableDictionary<int, float>();
         }
 
         public void Add(Edge edge) {
@@ -38,7 +35,7 @@ namespace MarcosPereira.MeshManipulation {
 
             // Custom comparer will look only at cost
             if (!this.costs.Remove(new Edge(cost, 0, 0))) {
-                throw new System.Exception(
+                throw new Exception(
                     $"Failed to remove neighbor cost of {cost}"
                 );
             }
@@ -83,7 +80,7 @@ namespace MarcosPereira.MeshManipulation {
 
         private static float NextFloat(float f) {
             if (f == float.PositiveInfinity) {
-                throw new System.Exception(
+                throw new Exception(
                     "Can't return next float of positive infinity."
                 );
             }
@@ -109,7 +106,7 @@ namespace MarcosPereira.MeshManipulation {
 
                 // Prevent infinite loops
                 if (nextFloat == float.PositiveInfinity) {
-                    throw new System.Exception(
+                    throw new Exception(
                         "Next float is positive infinity."
                     );
                 }

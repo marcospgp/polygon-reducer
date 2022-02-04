@@ -1,9 +1,7 @@
-using System;
 using UnityEngine;
 
 namespace MarcosPereira.MeshManipulation {
-    [Serializable]
-    public class MeshData {
+    public class MeshData : ScriptableObject {
         public SkinnedMeshRenderer skinnedMeshRenderer;
         public MeshFilter meshFilter;
         public Mesh reducedMesh;

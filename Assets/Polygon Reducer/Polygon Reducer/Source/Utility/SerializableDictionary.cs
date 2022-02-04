@@ -1,10 +1,16 @@
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace MarcosPereira.Utility {
+    // This class is serializable but not a ScriptableObject, as Unity does not
+    // support generic ScriptableObjects.
+    // Keep in mind that custom classes have poorer serialization support.
+    // For example, shared references may become independent copies.
+    [Serializable]
     public class SerializableDictionary<K, V> :
-    ScriptableObject, ISerializationCallbackReceiver, IEnumerable<KeyValuePair<K, V>> {
+    ISerializationCallbackReceiver, IEnumerable<KeyValuePair<K, V>> {
         private Dictionary<K, V> dictionary = new Dictionary<K, V>();
 
         [SerializeField]
@@ -39,13 +45,6 @@ namespace MarcosPereira.Utility {
 
         IEnumerator IEnumerable.GetEnumerator() =>
             this.dictionary.GetEnumerator();
-
-        public static SerializableDictionary<K, V> Create() {
-            SerializableDictionary<K, V> instance =
-                ScriptableObject.CreateInstance<SerializableDictionary<K, V>>();
-
-            return instance;
-        }
 
         public V this[K key] {
             get => this.dictionary[key];

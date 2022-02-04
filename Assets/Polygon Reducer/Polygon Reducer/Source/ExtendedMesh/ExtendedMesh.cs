@@ -381,12 +381,17 @@ namespace MarcosPereira.MeshManipulation {
 
                     if (neighborVertices[v] == null) {
                         neighborVertices[v] = SerializableHashSet<int>.Create();
+                        Debug.Log(neighborVertices[v]);
                     }
 
                     for (int k = 0; k < 3; k++) {
                         if (j == k) {
                             continue;
                         }
+
+                        Debug.Log(neighborVertices[v]);
+                        Debug.Log(this.triangles);
+                        Debug.Log(this.triangles[i + k]);
 
                         _ = neighborVertices[v].Add(this.triangles[i + k]);
                     }

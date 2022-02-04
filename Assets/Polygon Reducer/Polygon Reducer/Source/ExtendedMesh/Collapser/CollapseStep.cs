@@ -5,17 +5,20 @@ using MarcosPereira.Utility;
 namespace MarcosPereira.MeshManipulation {
     /// <summary>
     /// We store vertex collapse information in a CollapseStep object before
-    /// applying it to an ExtendedMesh. This makes it easier to undo the collapse
-    /// later.
+    /// applying it to an ExtendedMesh. This makes it easier to undo the
+    /// collapse later.
     /// </summary>
-    public class CollapseStep : ScriptableObject {
+    [System.Serializable]
+    public class CollapseStep {
         public int fromVertex;
         public int toVertex;
-        public SerializableHashSet<int> triangleDeletions;
+        public SerializableHashSet<int> triangleDeletions = new SerializableHashSet<int>();
 
         // Store previous and new normal vector so we can roll back if we want
         // to undo this step.
-        public SerializableDictionary<int, (Vector3 from, Vector3 to)> triangleNormalUpdates;
+        // TODO: Check if this tuple thing will serialize properly.
+        public SerializableDictionary<int, Vector3Pair> triangleNormalUpdates =
+            new SerializableDictionary<int, Vector3Pair>();
 
         // Store indices of triangles which had fromVertex replaced with
         // toVertex
@@ -25,21 +28,14 @@ namespace MarcosPereira.MeshManipulation {
         private ExtendedMesh extendedMesh;
 
         [SerializeField]
-        private SerializableDictionary<int, SerializableHashSet<int>> adjacentTriangleRemovals;
+        private SerializableDictionary<int, SerializableHashSet<int>> adjacentTriangleRemovals =
+            new SerializableDictionary<int, SerializableHashSet<int>>();
 
         [SerializeField]
-        private SerializableDictionary<int, SerializableHashSet<int>> adjacentTriangleAdditions;
+        private SerializableDictionary<int, SerializableHashSet<int>> adjacentTriangleAdditions =
+            new SerializableDictionary<int, SerializableHashSet<int>>();
 
-        // Used in place of constructor since this is a ScriptableObject
-        public void Initialize(ExtendedMesh m, int fromVertex, int toVertex) {
-            this.triangleDeletions = SerializableHashSet<int>.Create();
-            this.triangleNormalUpdates =
-                SerializableDictionary<int, (Vector3 from, Vector3 to)>.Create();
-            this.adjacentTriangleRemovals =
-                SerializableDictionary<int, SerializableHashSet<int>>.Create();
-            this.adjacentTriangleAdditions =
-                SerializableDictionary<int, SerializableHashSet<int>>.Create();
-
+        public CollapseStep(ExtendedMesh m, int fromVertex, int toVertex) {
             this.extendedMesh = m;
             this.fromVertex = fromVertex;
             this.toVertex = toVertex;
@@ -87,7 +83,10 @@ namespace MarcosPereira.MeshManipulation {
                 // Update triangle normals
                 this.triangleNormalUpdates.Add(
                     t,
-                    (m.triangleNormals[t], m.GetTriangleNormal(t))
+                    new Vector3Pair(
+                        m.triangleNormals[t],
+                        m.GetTriangleNormal(t)
+                    )
                 );
             }
         }
@@ -136,10 +135,10 @@ namespace MarcosPereira.MeshManipulation {
 
             // Triangle normals
             foreach (
-                KeyValuePair<int, (Vector3 from, Vector3 to)> x in
+                KeyValuePair<int, Vector3Pair> x in
                 this.triangleNormalUpdates
             ) {
-                this.extendedMesh.triangleNormals[x.Key] = x.Value.to;
+                this.extendedMesh.triangleNormals[x.Key] = x.Value.b;
             }
 
             _ = this.extendedMesh.deletedVertices.Add(this.fromVertex);
@@ -160,10 +159,10 @@ namespace MarcosPereira.MeshManipulation {
 
             // Triangle normals
             foreach (
-                KeyValuePair<int, (Vector3 from, Vector3 to)> x in
+                KeyValuePair<int, Vector3Pair> x in
                 this.triangleNormalUpdates
             ) {
-                this.extendedMesh.triangleNormals[x.Key] = x.Value.from;
+                this.extendedMesh.triangleNormals[x.Key] = x.Value.a;
             }
 
             // Vertex replacements
@@ -205,31 +204,35 @@ namespace MarcosPereira.MeshManipulation {
             this.RecalculateNeighborVertices();
         }
 
+        private static SerializableHashSet<int> GetOrCreateSet(
+            SerializableDictionary<int, SerializableHashSet<int>> d,
+            int key
+        ) {
+            if (!d.TryGetValue(key, out SerializableHashSet<int> set)
+            ) {
+                set = new SerializableHashSet<int>();
+                d.Add(key, set);
+            }
+
+            return set;
+        }
+
         private void AdjacentTriangleAddition(int vertex, int triangle) {
             SerializableHashSet<int> set =
-                this.GetOrCreateSet(this.adjacentTriangleAdditions, vertex);
+                CollapseStep.GetOrCreateSet(
+                    this.adjacentTriangleAdditions, vertex
+                );
 
             _ = set.Add(triangle);
         }
 
         private void AdjacentTriangleRemoval(int vertex, int triangle) {
             SerializableHashSet<int> set =
-                this.GetOrCreateSet(this.adjacentTriangleRemovals, vertex);
+                CollapseStep.GetOrCreateSet(
+                    this.adjacentTriangleRemovals, vertex
+                );
 
             _ = set.Add(triangle);
-        }
-
-        private SerializableHashSet<int> GetOrCreateSet(
-            SerializableDictionary<int, SerializableHashSet<int>> d,
-            int key
-        ) {
-            if (!d.TryGetValue(key, out SerializableHashSet<int> set)
-            ) {
-                set = SerializableHashSet<int>.Create();
-                d.Add(key, set);
-            }
-
-            return set;
         }
 
         private void RecalculateNeighborVertices() {

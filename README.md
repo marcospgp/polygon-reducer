@@ -28,3 +28,5 @@ fix serialization of nested (2D) structures. flatten and store flat list + list 
 maybe create a custom class for serializable hashsets and such that handles the serialization/deserialization logic itself?
 
 review polygon reducer logic to see if extended meshes are only generated once
+
+can't instantiate generic scriptableobjects. how about using custom class serialization instead, which is supported as of recently, and perhaps use structs instead of classes to make it super clear how unity serialization is storing those values inline.

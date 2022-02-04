@@ -1,10 +1,15 @@
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace MarcosPereira.Utility {
-    public class SerializableHashSet<T> :
-    ScriptableObject, ISerializationCallbackReceiver, IEnumerable<T> {
+    // This class is serializable but not a ScriptableObject, as Unity does not
+    // support generic ScriptableObjects.
+    // Keep in mind that custom classes have poorer serialization support.
+    // For example, shared references may become independent copies.
+    [Serializable]
+    public class SerializableHashSet<T> : ISerializationCallbackReceiver, IEnumerable<T> {
         private HashSet<T> hashSet = new HashSet<T>();
 
         [SerializeField]
@@ -29,13 +34,6 @@ namespace MarcosPereira.Utility {
 
         IEnumerator IEnumerable.GetEnumerator() =>
             this.hashSet.GetEnumerator();
-
-        public static SerializableHashSet<T> Create() {
-            SerializableHashSet<T> instance =
-                ScriptableObject.CreateInstance<SerializableHashSet<T>>();
-
-            return instance;
-        }
 
         public int count => this.hashSet.Count;
 
