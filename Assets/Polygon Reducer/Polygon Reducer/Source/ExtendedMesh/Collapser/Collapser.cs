@@ -92,9 +92,7 @@ namespace MarcosPereira.MeshManipulation {
         private void ApplyNewCollapseStep() {
             Edge minCostEdge = this.costs.PopMinimumCost();
 
-            CollapseStep step = ScriptableObject.CreateInstance<CollapseStep>();
-
-            step.Initialize(
+            var step = new CollapseStep(
                 this.m,
                 minCostEdge.fromVertex,
                 minCostEdge.toVertex
@@ -121,7 +119,7 @@ namespace MarcosPereira.MeshManipulation {
         }
 
         private Costs GetInitialCollapseCosts() {
-            var costs = Costs.Create();
+            var costs = new Costs();
 
             // Seams are untouchable - we don't want to open holes in the mesh.
             SerializableHashSet<int> untouchableVertices = this.m.seams;
@@ -193,7 +191,7 @@ namespace MarcosPereira.MeshManipulation {
 
             // Ensure cost has been set above, otherwise could lead to issues.
             if (minCost == float.MaxValue) {
-                throw new System.Exception(
+                throw new Exception(
                     "Could not determine collapse cost."
                 );
             }

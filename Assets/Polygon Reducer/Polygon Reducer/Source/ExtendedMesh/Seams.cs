@@ -7,7 +7,7 @@ namespace MarcosPereira.MeshManipulation {
         // Get seam vertices of a given mesh. These should not be manipulated to
         // avoid creating holes in the mesh.
         public static SerializableHashSet<int> GetSeams(ExtendedMesh m) {
-            var seamVertices = SerializableHashSet<int>.Create();
+            var seamVertices = new SerializableHashSet<int>();
 
             // Allocate a working list here to avoid creating a new one for each
             // vertex (which would produce a lot of garbage).

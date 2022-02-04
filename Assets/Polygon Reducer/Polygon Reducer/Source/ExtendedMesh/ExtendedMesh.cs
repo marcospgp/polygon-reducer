@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using MarcosPereira.Utility;
 
 namespace MarcosPereira.MeshManipulation {
+    // This class is a ScriptableObject so that shared references to its objects
+    // are preserved between serializations made by Unity.
     public class ExtendedMesh : ScriptableObject {
         // Cached vertices of original mesh.
         public Vector3[] vertices;
@@ -69,7 +71,7 @@ namespace MarcosPereira.MeshManipulation {
             m.triangleNormals = m.GetTriangleNormals();
             m.seams = Seams.GetSeams(m);
 
-            m.collapser = Collapser.Create(m);
+            m.collapser = new Collapser(m);
 
             return m;
         }
@@ -94,7 +96,7 @@ namespace MarcosPereira.MeshManipulation {
         // recalculating, but it didn't work and may require a lot of additional
         // computation.
         public void RecalculateNeighborVertices(int vertex) {
-            this.neighborVertices[vertex] = SerializableHashSet<int>.Create();
+            this.neighborVertices[vertex] = new SerializableHashSet<int>();
 
             foreach (int t in this.adjacentTriangles[vertex]) {
                 for (int i = 0; i < 3; i++) {
@@ -380,7 +382,7 @@ namespace MarcosPereira.MeshManipulation {
                     // triangle
 
                     if (neighborVertices[v] == null) {
-                        neighborVertices[v] = SerializableHashSet<int>.Create();
+                        neighborVertices[v] = new SerializableHashSet<int>();
                         Debug.Log(neighborVertices[v]);
                     }
 
@@ -400,7 +402,7 @@ namespace MarcosPereira.MeshManipulation {
 
                     if (adjacentTriangles[v] == null) {
                         adjacentTriangles[v] =
-                            SerializableHashSet<int>.Create();
+                            new SerializableHashSet<int>();
                     }
 
                     _ = adjacentTriangles[v].Add(i);
@@ -416,7 +418,7 @@ namespace MarcosPereira.MeshManipulation {
         // be accessed with triangleNormals[t / 3] where t is the triangle
         // index. This is easily forgotten.
         private SerializableDictionary<int, Vector3> GetTriangleNormals() {
-            var normals = SerializableDictionary<int, Vector3>.Create();
+            var normals = new SerializableDictionary<int, Vector3>();
 
             for (int i = 0; i < this.triangles.Length; i += 3) {
                 normals[i] = this.GetTriangleNormal(i);
