@@ -8,6 +8,11 @@ namespace MarcosPereira.MeshManipulation {
     // This class is a ScriptableObject so that shared references to its objects
     // are preserved between serializations made by Unity.
     public class ExtendedMesh : ScriptableObject {
+        // Original mesh. Points to a mesh asset, so do not modify it directly!
+        // Do not read vertices or triangles through it either - use
+        // this.vertices or this.triangles instead as that is more efficient.
+        public Mesh originalMesh;
+
         // Cached vertices of original mesh.
         public Vector3[] vertices;
 
@@ -35,23 +40,19 @@ namespace MarcosPereira.MeshManipulation {
         // gaps on mesh surface.
         public SerializableHashSet<int> seams;
 
-        // Original mesh. Points to a mesh asset, so do not modify it directly!
-        // Do not read vertices or triangles through it either - use
-        // this.vertices or this.triangles instead as that is more efficient.
-        public Mesh originalMesh;
-
         // A collapser object, in charge of reducing polygons of this mesh.
         [SerializeField]
         private Collapser collapser;
 
         // Factory method used in place of constructor as this is a
-        // ScriptableObject
+        // ScriptableObject.
         public static ExtendedMesh Create(Mesh mesh) {
             ExtendedMesh m =
                 ScriptableObject.CreateInstance<ExtendedMesh>();
 
             m.originalMesh = mesh;
             m.vertices = mesh.vertices;
+            m.deletedVertices = new SerializableHashSet<int>();
 
             // It is not explicitly stated that mesh.triangles contains each
             // submesh's triangles in the correct order, so we fetch them
@@ -64,11 +65,11 @@ namespace MarcosPereira.MeshManipulation {
             }
 
             m.triangles = triangles.ToArray();
-
-            (m.neighborVertices, m.adjacentTriangles) =
-                m.GetNeighbors();
-
+            m.deletedTriangles = new SerializableHashSet<int>();
             m.triangleNormals = m.GetTriangleNormals();
+
+            (m.neighborVertices, m.adjacentTriangles) = m.GetNeighbors();
+
             m.seams = Seams.GetSeams(m);
 
             m.collapser = new Collapser(m);
@@ -383,17 +384,12 @@ namespace MarcosPereira.MeshManipulation {
 
                     if (neighborVertices[v] == null) {
                         neighborVertices[v] = new SerializableHashSet<int>();
-                        Debug.Log(neighborVertices[v]);
                     }
 
                     for (int k = 0; k < 3; k++) {
                         if (j == k) {
                             continue;
                         }
-
-                        Debug.Log(neighborVertices[v]);
-                        Debug.Log(this.triangles);
-                        Debug.Log(this.triangles[i + k]);
 
                         _ = neighborVertices[v].Add(this.triangles[i + k]);
                     }
