@@ -40,10 +40,6 @@ maybe create a custom class for serializable hashsets and such that handles the 
 
 review polygon reducer logic to see if extended meshes are only generated once
 
-can't instantiate generic scriptableobjects. how about using custom class serialization instead, which is supported as of recently, and perhaps use structs instead of classes to make it super clear how unity serialization is storing those values inline.
-
-latest bug: after entering play mode, throws error whenever reduction level is set higher than the highest it was set to while in editor mode.
-
 since serializable classes are no longer scriptable objects, make them inherit the respective collection class so that intellisense is good and nice.
 
 In `this.costs = new SerializableSortedSet<Edge>(Costs.CostComparer());`, check if the comparison can be set at the Edge level instead of at the dictionary level.
