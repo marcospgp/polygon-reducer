@@ -11,7 +11,7 @@ namespace MarcosPereira.Utility {
     [Serializable]
     public class SerializableDictionary<K, V> :
     ISerializationCallbackReceiver, IEnumerable<KeyValuePair<K, V>> {
-        private Dictionary<K, V> dictionary = new Dictionary<K, V>();
+        private readonly Dictionary<K, V> dictionary = new Dictionary<K, V>();
 
         [SerializeField]
         private List<K> serializableKeys;
@@ -22,11 +22,10 @@ namespace MarcosPereira.Utility {
         void ISerializationCallbackReceiver.OnBeforeSerialize() {
             this.serializableKeys = new List<K>(this.dictionary.Keys);
             this.serializableValues = new List<V>(this.dictionary.Values);
-            this.dictionary = null;
         }
 
         void ISerializationCallbackReceiver.OnAfterDeserialize() {
-            this.dictionary = new Dictionary<K, V>(this.serializableKeys.Count);
+            this.dictionary.Clear();
 
             for (int i = 0; i < this.serializableKeys.Count; i++) {
                 this.dictionary.Add(
@@ -34,9 +33,6 @@ namespace MarcosPereira.Utility {
                     this.serializableValues[i]
                 );
             }
-
-            this.serializableKeys = null;
-            this.serializableValues = null;
         }
 
         // Allow iterating over this class

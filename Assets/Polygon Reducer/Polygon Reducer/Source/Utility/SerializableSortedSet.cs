@@ -10,22 +10,21 @@ namespace MarcosPereira.Utility {
     // For example, shared references may become independent copies.
     [Serializable]
     public class SerializableSortedSet<T> : ISerializationCallbackReceiver, IEnumerable<T> {
-        private SortedSet<T> sortedSet;
+        private readonly SortedSet<T> sortedSet = new SortedSet<T>();
 
         [SerializeField]
         private List<T> serializableItems;
 
         void ISerializationCallbackReceiver.OnBeforeSerialize() {
             this.serializableItems = new List<T>(this.sortedSet);
-            this.sortedSet = null;
         }
 
         void ISerializationCallbackReceiver.OnAfterDeserialize() {
+            this.sortedSet.Clear();
+
             foreach (T item in this.serializableItems) {
                 _ = this.sortedSet.Add(item);
             }
-
-            this.serializableItems = null;
         }
 
         // Allow iterating over this class
