@@ -44,16 +44,25 @@ namespace MarcosPereira.MeshManipulation {
         }
 
         public Edge PopMinimumCost() {
+            // "If the SortedSet<T> has no elements, then the Min property
+            // returns the default value of T."
+            if (this.costs.count == 0) {
+                throw new Exception(
+                    "Cannot retrieve minimum collapse cost: costs sorted set " +
+                    "is empty."
+                );
+            }
+
             Edge min = this.costs.min;
 
             if (!this.costs.Remove(min)) {
-                Debug.LogError(
+                throw new Exception(
                     $"Failed to remove smallest cost edge ({min})"
                 );
             }
 
             if (!this.costByVertex.Remove(min.fromVertex)) {
-                Debug.LogError(
+                throw new Exception(
                     "Failed to remove cost of minimum cost vertex " +
                     $"{min.fromVertex}"
                 );

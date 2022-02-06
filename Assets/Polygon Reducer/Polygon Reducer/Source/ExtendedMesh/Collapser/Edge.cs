@@ -1,9 +1,11 @@
 namespace MarcosPereira.MeshManipulation {
+    // Would prefer this struct to be readonly, but then it wouldn't be
+    // serializable.
     [System.Serializable]
-    public readonly struct Edge {
-        public readonly float cost;
-        public readonly int fromVertex;
-        public readonly int toVertex;
+    public struct Edge {
+        public float cost;
+        public int fromVertex;
+        public int toVertex;
 
         public Edge(float cost, int fromVertex, int toVertex) {
             this.cost = cost;

@@ -54,25 +54,25 @@ namespace MarcosPereira.MeshManipulation {
             }
         }
 
-        // We used to reduce meshes in OnEnable and restore them in OnDisable, but there were
-        // multiple issues with this. When entering play mode, OnEnable sees an already enabled
-        // state after deserialization. Additionally, when polygon reducer is enabled on a prefab,
-        // and the folder that prefab is in is renamed, OnEnable sees the already reduced mesh in
-        // the mesh filter or skinned mesh renderer's sharedMesh - even if OnDisable restored it
-        // to its original.
         public void Awake() {
             if (this.DestroyIfDuplicate()) {
                 return;
             }
 
-            this.meshData = this.GetMeshData();
+            if (this.meshData == null) {
+                this.meshData = this.GetMeshData();
+            }
 
-            this.details = new List<ExtendedMeshInfo>();
+            if (this.details == null) {
+                this.details = new List<ExtendedMeshInfo>();
 
-            foreach (MeshData meshData in this.meshData) {
-                this.details.Add(meshData.extendedMeshInfo);
+                foreach (MeshData meshData in this.meshData) {
+                    this.details.Add(meshData.extendedMeshInfo);
+                }
             }
         }
+
+        private Coroutine test;
 
         public void OnEnable() {
             // Use a coroutine instead of Update() for efficiency - once we want
@@ -90,6 +90,7 @@ namespace MarcosPereira.MeshManipulation {
             // Stop coroutine
             if (this.inspectorCoroutine != null) {
                 this.StopCoroutine(this.inspectorCoroutine);
+                this.inspectorCoroutine = null;
             }
         }
 
@@ -121,9 +122,9 @@ namespace MarcosPereira.MeshManipulation {
                             meshData.reducedMesh;
                     }
 
+                    // TODO: remove
                     meshData.extendedMeshInfo =
                         new ExtendedMeshInfo(meshData.extendedMesh);
-
                     this.details.Add(meshData.extendedMeshInfo);
                 }
 
