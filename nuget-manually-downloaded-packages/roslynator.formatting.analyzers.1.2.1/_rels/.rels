@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Type="http://schemas.microsoft.com/packaging/2010/07/manifest" Target="/Roslynator.Formatting.Analyzers.nuspec" Id="R6AA40992226C855B" />
-  <Relationship Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="/package/services/metadata/core-properties/00f5e1a05b8d4da1a25594ee6f56d528.psmdcp" Id="RE6745AC76903DD33" />
-</Relationships>
