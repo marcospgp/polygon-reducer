@@ -2,12 +2,24 @@
 
 Unity package for reducing mesh vertex counts in real time by dragging a slider.
 
-Vertex collapse algorithm based on <https://drive.google.com/file/d/18dCjkbG8Yo9b5ypyQliyL7FN1KcEqLC4/view?usp=sharing>
+Vertex collapse algorithm based on [this gdmag article](https://drive.google.com/file/d/18dCjkbG8Yo9b5ypyQliyL7FN1KcEqLC4/view?usp=sharing).
+
+It may be easier to set up this package by simply installing it from the Unity asset store. In doing so, you can ignore any set up steps below.
+
+## Dependencies
+
+The following repositories must be found in the Assets folder of the Unity project you want to use Polygon Reducer in:
+
+* <https://github.com/marcospgp/unity-utilities>
 
 ## How to use
 
-Either install this package from the Unity Asset Store or place the `Polygon Reducer` folder of this repository in the `Assets` folder of your Unity project. Git submodules can be used to keep the folder in sync with this repository.
-Then, simply place the `Polygon Reducer` component in a gameobject containing a skinned mesh renderer or mesh filter, either on itself or on any of its children.
+1. Place this repository in the `Assets` folder of your Unity project.
+2. Add the `Polygon Reducer` component to the mesh filter/skinned mesh renderer containing gameobjects you want to optimize.
+
+The component will also detect meshes in child gameobjects.
+
+### Not a local package
 
 This package cannot be installed with the "add package from local folder" option of the Unity package manager. This is to avoid managing an unnecessary `manifest.json` file when we can simply place this package in the `Assets` folder for development.
 
