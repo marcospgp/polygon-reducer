@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using MarcosPereira.Utility;
+using MarcosPereira.UnityUtilities;
 
 namespace MarcosPereira.MeshManipulation {
     [Serializable]

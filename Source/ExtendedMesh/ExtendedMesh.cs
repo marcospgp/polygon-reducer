@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Unity.Collections;
 using System.Collections.Generic;
-using MarcosPereira.Utility;
+using MarcosPereira.UnityUtilities;
 
 namespace MarcosPereira.MeshManipulation {
     // This class is a ScriptableObject so that shared references to its objects
