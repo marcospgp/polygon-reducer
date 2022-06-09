@@ -87,6 +87,9 @@ namespace MarcosPereira.MeshManipulation {
                 return 0;
             });
 
+        // TODO: this is sketchy, fix it. Doubling epsilon on each iteration
+        // will be unlikely to find lowest possible epsilon. There are better
+        // ways, such as bit incrementing the int representation of a float.
         private static float NextFloat(float f) {
             if (f == float.PositiveInfinity) {
                 throw new Exception(
