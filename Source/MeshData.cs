@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     [System.Serializable]
     public class MeshData {
         public SkinnedMeshRenderer skinnedMeshRenderer;

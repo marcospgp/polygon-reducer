@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     // This class is used to display ExtendedMesh information in the inspector.
     // It is easier than serializing the ExtendedMesh class itself.
     [System.Serializable]

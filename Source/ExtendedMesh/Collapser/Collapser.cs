@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MarcosPereira.UnityUtilities;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     [Serializable]
     public class Collapser {
         [SerializeField]

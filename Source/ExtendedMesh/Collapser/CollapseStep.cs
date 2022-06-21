@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MarcosPereira.UnityUtilities;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     /// <summary>
     /// We store vertex collapse information in a CollapseStep object before
     /// applying it to an ExtendedMesh. This makes it easier to undo the

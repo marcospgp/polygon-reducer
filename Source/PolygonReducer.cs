@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     [ExecuteAlways]
     [DisallowMultipleComponent]
     public class PolygonReducer : MonoBehaviour {

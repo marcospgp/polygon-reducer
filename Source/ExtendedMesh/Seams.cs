@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MarcosPereira.UnityUtilities;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     public static class Seams {
         // Get seam vertices of a given mesh. These should not be manipulated to
         // avoid creating holes in the mesh.

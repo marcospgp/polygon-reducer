@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     [CustomPropertyDrawer(typeof(ExtendedMeshInfo))]
     public class ExtendedMeshInfoPropertyDrawer : PropertyDrawer {
         public override VisualElement CreatePropertyGUI(

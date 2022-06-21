@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     // Would prefer this struct to be readonly, but then it wouldn't be
     // serializable.
     [System.Serializable]

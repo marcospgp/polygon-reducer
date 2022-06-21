@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     [CustomEditor(typeof(PolygonReducer))]
     public class PolygonReducerInspector : Editor {
         public override VisualElement CreateInspectorGUI() {

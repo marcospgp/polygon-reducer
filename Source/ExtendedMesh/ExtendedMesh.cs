@@ -4,7 +4,7 @@ using Unity.Collections;
 using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
 
-namespace MarcosPereira.MeshManipulation {
+namespace MarcosPereira {
     // This class is a ScriptableObject so that shared references to its objects
     // are preserved between serializations made by Unity.
     public class ExtendedMesh : ScriptableObject {
