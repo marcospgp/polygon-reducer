@@ -1,8 +1,8 @@
-using UnityEngine;
-using UnityEngine.Rendering;
-using Unity.Collections;
 using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
+using Unity.Collections;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace MarcosPereira {
     // This class is a ScriptableObject so that shared references to its objects
