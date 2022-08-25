@@ -6,19 +6,19 @@ namespace MarcosPereira {
     [ExecuteAlways]
     [DisallowMultipleComponent]
     public class PolygonReducer : MonoBehaviour {
-        // Keep a static dictionary with original Mesh references, so that only
-        // a single ExtendedMesh is created for each Mesh even if this script
-        // is present in multiple gameobjects with the same mesh.
-        // TODO: handle serialization of this thing
-        private static readonly Dictionary<Mesh, ExtendedMesh> extendedMeshCache =
-            new Dictionary<Mesh, ExtendedMesh>();
-
         [Range(0f, 100f)]
         [Tooltip(
             "Set the percentage of vertices to be collapsed. Seam vertices " +
             "are ignored, as removing them would create holes in the mesh."
         )]
         public float reductionPercent = 20f;
+
+        // Keep a static dictionary with original Mesh references, so that only
+        // a single ExtendedMesh is created for each Mesh even if this script
+        // is present in multiple gameobjects with the same mesh.
+        // TODO: handle serialization of this thing
+        private static readonly Dictionary<Mesh, ExtendedMesh> extendedMeshCache =
+            new Dictionary<Mesh, ExtendedMesh>();
 
         [SerializeField, HideInInspector]
         private List<MeshData> meshData;
@@ -28,31 +28,35 @@ namespace MarcosPereira {
 
         private Coroutine inspectorCoroutine;
 
-        // Debugging fields
-        [SerializeField]
-        [Tooltip(
-            "Highlight vertices that cannot be collapsed due to being part " +
-            "of a mesh seam."
-        )]
-        private bool highlightSeams = false;
-
-        public void OnDrawGizmos() {
-            if (this.highlightSeams) {
-                foreach (MeshData m in this.meshData) {
-                    ExtendedMesh extendedMesh = m.extendedMesh;
-                    Gizmos.color = Color.red;
-
-                    foreach (int i in extendedMesh.seams) {
-                        Gizmos.DrawSphere(
-                            this.transform.TransformPoint(
-                                extendedMesh.vertices[i]
-                            ),
-                            0.003f
-                        );
-                    }
-                }
+        private static ExtendedMesh GetExtendedMesh(Mesh mesh) {
+            if (
+                !PolygonReducer.extendedMeshCache
+                    .TryGetValue(mesh, out ExtendedMesh extendedMesh)
+            ) {
+                extendedMesh = ExtendedMesh.Create(mesh);
+                PolygonReducer.extendedMeshCache.Add(mesh, extendedMesh);
             }
+
+            return extendedMesh;
         }
+
+        // public void OnDrawGizmos() {
+        //     // Highlight seams (vertices that cannot be collapsed due to
+        //     // being part of a mesh seam)
+        //     foreach (MeshData m in this.meshData) {
+        //         ExtendedMesh extendedMesh = m.extendedMesh;
+        //         Gizmos.color = Color.red;
+        //
+        //         foreach (int i in extendedMesh.seams) {
+        //             Gizmos.DrawSphere(
+        //                 this.transform.TransformPoint(
+        //                     extendedMesh.vertices[i]
+        //                 ),
+        //                 0.003f
+        //             );
+        //         }
+        //     }
+        // }
 
         public void Awake() {
             if (this.DestroyIfDuplicate()) {
@@ -71,8 +75,6 @@ namespace MarcosPereira {
                 }
             }
         }
-
-        private Coroutine test;
 
         public void OnEnable() {
             // Use a coroutine instead of Update() for efficiency - once we want
@@ -170,7 +172,7 @@ namespace MarcosPereira {
         private List<MeshData> GetMeshData() {
             var meshData = new List<MeshData>();
 
-            static void logReadWriteError(string meshName) =>
+            static void LogReadWriteError(string meshName) =>
                 Debug.LogError(
                     $"Polygon Reducer cannot modify mesh \"{meshName}\" - " +
                     "please enable the \"Read/Write Enabled\" " +
@@ -179,7 +181,7 @@ namespace MarcosPereira {
 
             static MeshData F(Mesh mesh) {
                 if (!mesh.isReadable) {
-                    logReadWriteError(mesh.name);
+                    LogReadWriteError(mesh.name);
                     return null;
                 }
 
@@ -233,18 +235,6 @@ namespace MarcosPereira {
             }
 
             return meshData;
-        }
-
-        private static ExtendedMesh GetExtendedMesh(Mesh mesh) {
-            if (
-                !PolygonReducer.extendedMeshCache
-                    .TryGetValue(mesh, out ExtendedMesh extendedMesh)
-            ) {
-                extendedMesh = ExtendedMesh.Create(mesh);
-                PolygonReducer.extendedMeshCache.Add(mesh, extendedMesh);
-            }
-
-            return extendedMesh;
         }
     }
 }
