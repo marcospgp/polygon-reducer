@@ -174,25 +174,14 @@ namespace MarcosPereira.PolygonReducer {
 
             static void LogReadWriteError(string meshName) =>
                 Debug.LogError(
-                    $"Polygon Reducer cannot modify mesh \"{meshName}\" - " +
-                    "please enable the \"Read/Write Enabled\" " +
+                    $"Polygon Reducer cannot read mesh \"{meshName}\". " +
+                    "Please tick the \"Read/Write Enabled\" " +
                     "checkbox in the mesh's import settings."
                 );
 
             static MeshData F(Mesh mesh) {
                 if (!mesh.isReadable) {
                     LogReadWriteError(mesh.name);
-                    return null;
-                }
-
-                if (mesh.name.Contains("(reduced)")) {
-                    Debug.LogWarning(
-                        "Polygon Reducer: Skipping mesh with \"(reduced)\" in name. " +
-                        "Reducing an already reduced mesh makes it impossible to undo the " +
-                        "reduction to less than the current level. If this is happening in a " +
-                        "prefab, try resetting it."
-                    );
-
                     return null;
                 }
 
