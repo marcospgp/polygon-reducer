@@ -1,5 +1,5 @@
-namespace MarcosPereira.PolygonReducer {
-    public interface DefaultCost {
-        public float Get(int from, int to, ExtendedMesh m)
+namespace MarcosPereira.PolygonReducer.CostFunctions {
+    public interface ICost {
+        public float Get(int from, int to, ExtendedMesh m);
     }
 }

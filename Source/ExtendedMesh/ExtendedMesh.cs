@@ -72,7 +72,7 @@ namespace MarcosPereira.PolygonReducer {
 
             m.seams = Seams.GetSeams(m);
 
-            m.collapser = new Collapser(m);
+            m.collapser = new Collapser(m, Cost.Default);
 
             return m;
         }

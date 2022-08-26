@@ -18,10 +18,12 @@ namespace MarcosPereira.PolygonReducer {
         [SerializeField]
         private int lastAppliedCollapseStep = -1;
 
-        private
+        [SerializeField]
+        private Cost cost;
 
-        public Collapser(ExtendedMesh m) {
+        public Collapser(ExtendedMesh m, Cost cost) {
             this.m = m;
+            this.cost = cost;
 
             // Calculate initial collapse costs.
             this.costs = this.GetInitialCollapseCosts();
@@ -182,7 +184,7 @@ namespace MarcosPereira.PolygonReducer {
 
                     _ = seen.Add(v);
 
-                    float cost = this.Cost(u, v, this.m);
+                    float cost = this.cost.Get(u, v, this.m);
 
                     if (cost < minCost) {
                         minCost = cost;
