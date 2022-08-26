@@ -24,9 +24,18 @@ namespace MarcosPereira.PolygonReducer {
         private List<MeshData> meshData;
 
         [SerializeField]
+        private ReductionMethod method;
+
+        [SerializeField]
         private List<ExtendedMeshInfo> details;
 
         private Coroutine inspectorCoroutine;
+
+        [System.Serializable]
+        public enum ReductionMethod : byte {
+            Default,
+            RemoveDetail
+        }
 
         // public void OnDrawGizmos() {
         //     // Highlight seams (vertices that cannot be collapsed due to

@@ -8,6 +8,8 @@ namespace MarcosPereira.PolygonReducer {
         public override VisualElement CreateInspectorGUI() {
             var inspector = new VisualElement();
 
+            // InspectorElement.FillDefaultInspector(inspector, this.serializedObject, this);
+
             // Reduction percent setting
             inspector.Add(
                 new PropertyField(
@@ -44,7 +46,6 @@ namespace MarcosPereira.PolygonReducer {
             });
 
             // Debug foldout
-            // Work in progress - uncomment to display
 
             // var debugFoldout = new Foldout() {
             //     text = "Debug",
