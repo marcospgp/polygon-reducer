@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 using MarcosPereira.UnityUtilities;
+using UnityEngine;
 
 namespace MarcosPereira {
     /// <summary>
@@ -16,7 +16,6 @@ namespace MarcosPereira {
 
         // Store previous and new normal vector so we can roll back if we want
         // to undo this step.
-        // TODO: Check if this tuple thing will serialize properly.
         public SerializableDictionary<int, Vector3Pair> triangleNormalUpdates =
             new SerializableDictionary<int, Vector3Pair>();
 
