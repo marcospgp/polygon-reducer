@@ -28,18 +28,6 @@ namespace MarcosPereira {
 
         private Coroutine inspectorCoroutine;
 
-        private static ExtendedMesh GetExtendedMesh(Mesh mesh) {
-            if (
-                !PolygonReducer.extendedMeshCache
-                    .TryGetValue(mesh, out ExtendedMesh extendedMesh)
-            ) {
-                extendedMesh = ExtendedMesh.Create(mesh);
-                PolygonReducer.extendedMeshCache.Add(mesh, extendedMesh);
-            }
-
-            return extendedMesh;
-        }
-
         // public void OnDrawGizmos() {
         //     // Highlight seams (vertices that cannot be collapsed due to
         //     // being part of a mesh seam)
@@ -132,6 +120,18 @@ namespace MarcosPereira {
 
                 lastReductionPercent = this.reductionPercent;
             }
+        }
+
+        private static ExtendedMesh GetExtendedMesh(Mesh mesh) {
+            if (
+                !PolygonReducer.extendedMeshCache
+                    .TryGetValue(mesh, out ExtendedMesh extendedMesh)
+            ) {
+                extendedMesh = ExtendedMesh.Create(mesh);
+                PolygonReducer.extendedMeshCache.Add(mesh, extendedMesh);
+            }
+
+            return extendedMesh;
         }
 
         private bool DestroyIfDuplicate() {
