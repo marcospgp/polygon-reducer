@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     [Serializable]
     public class Collapser {
         [SerializeField]
@@ -17,6 +17,8 @@ namespace MarcosPereira {
 
         [SerializeField]
         private int lastAppliedCollapseStep = -1;
+
+        private
 
         public Collapser(ExtendedMesh m) {
             this.m = m;
@@ -180,7 +182,7 @@ namespace MarcosPereira {
 
                     _ = seen.Add(v);
 
-                    float cost = this.Cost(u, v);
+                    float cost = this.Cost(u, v, this.m);
 
                     if (cost < minCost) {
                         minCost = cost;

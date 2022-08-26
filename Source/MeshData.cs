@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     [System.Serializable]
     public class MeshData {
         public SkinnedMeshRenderer skinnedMeshRenderer;

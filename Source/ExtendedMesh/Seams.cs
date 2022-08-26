@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     public static class Seams {
         // Get seam vertices of a given mesh. These should not be manipulated to
         // avoid creating holes in the mesh.

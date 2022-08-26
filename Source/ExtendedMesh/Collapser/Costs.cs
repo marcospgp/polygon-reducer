@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     [Serializable]
     public class Costs {
         [SerializeField]

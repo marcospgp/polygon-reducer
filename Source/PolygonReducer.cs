@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     [ExecuteAlways]
     [DisallowMultipleComponent]
     public class PolygonReducer : MonoBehaviour {

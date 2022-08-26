@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     /// <summary>
     /// We store vertex collapse information in a CollapseStep object before
     /// applying it to an ExtendedMesh. This makes it easier to undo the

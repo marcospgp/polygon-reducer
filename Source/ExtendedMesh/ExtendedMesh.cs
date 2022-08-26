@@ -4,7 +4,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     // This class is a ScriptableObject so that shared references to its objects
     // are preserved between serializations made by Unity.
     public class ExtendedMesh : ScriptableObject {

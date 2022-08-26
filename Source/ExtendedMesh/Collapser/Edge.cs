@@ -1,4 +1,4 @@
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     // Would prefer this struct to be readonly, but then it wouldn't be
     // serializable.
     [System.Serializable]

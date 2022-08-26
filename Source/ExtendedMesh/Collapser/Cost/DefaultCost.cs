@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using MarcosPereira.UnityUtilities;
 using UnityEngine;
 
-namespace MarcosPereira {
-    public static class DefaultCost {
+namespace MarcosPereira.PolygonReducer {
+    public static class DefaultCost : ICost {
         // Default algorithm to calculate cost of collapsing a vertex into another.
         // Assigns a lower cost to redundant vertices,
         public static float Get(int from, int to, ExtendedMesh m) {

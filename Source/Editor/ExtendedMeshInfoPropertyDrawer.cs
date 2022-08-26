@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     [CustomPropertyDrawer(typeof(ExtendedMeshInfo))]
     public class ExtendedMeshInfoPropertyDrawer : PropertyDrawer {
         public override VisualElement CreatePropertyGUI(

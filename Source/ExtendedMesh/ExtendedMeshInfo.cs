@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
-namespace MarcosPereira {
+namespace MarcosPereira.PolygonReducer {
     // This class is used to display ExtendedMesh information in the inspector.
     // It is easier than serializing the ExtendedMesh class itself.
     [System.Serializable]
