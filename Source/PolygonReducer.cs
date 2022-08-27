@@ -173,7 +173,11 @@ namespace MarcosPereira.PolygonReducer {
                 $"\"{this.gameObject.name}\"."
             );
 
-            GameObject.Destroy(this);
+            if (Application.isPlaying) {
+                GameObject.Destroy(this);
+            } else {
+                Object.DestroyImmediate(this, allowDestroyingAssets: false);
+            }
 
             return true;
         }
