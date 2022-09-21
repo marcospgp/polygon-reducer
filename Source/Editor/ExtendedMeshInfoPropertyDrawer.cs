@@ -1,6 +1,6 @@
 using UnityEditor;
-using UnityEngine;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace MarcosPereira.PolygonReducer {
@@ -55,7 +55,7 @@ namespace MarcosPereira.PolygonReducer {
 
             var e = new PropertyField(originalVertexCount, "Original");
             var f = new PropertyField(reducedVertexCount, "Reduced");
-            var g = new PropertyField(seamVertexCount, "Seams (nonremovable)");
+            var g = new PropertyField(seamVertexCount, "Seams (unremovable)");
             e.SetEnabled(false);
             f.SetEnabled(false);
             g.SetEnabled(false);
