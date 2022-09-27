@@ -33,13 +33,13 @@ namespace MarcosPereira.PolygonReducer {
 
             this.originalVertexCount = vertexCount;
             this.reducedVertexCount =
-                vertexCount - extendedMesh.deletedVertices.count;
+                vertexCount - extendedMesh.deletedVertices.Count;
 
             this.originalTriangleCount = triangleCount;
             this.reducedTriangleCount =
-                triangleCount - extendedMesh.deletedTriangles.count;
+                triangleCount - extendedMesh.deletedTriangles.Count;
 
-            this.seamVertexCount = extendedMesh.seams.count;
+            this.seamVertexCount = extendedMesh.seams.Count;
         }
     }
 }

@@ -46,14 +46,14 @@ namespace MarcosPereira.PolygonReducer {
         public Edge PopMinimumCost() {
             // "If the SortedSet<T> has no elements, then the Min property
             // returns the default value of T."
-            if (this.costs.count == 0) {
+            if (this.costs.Count == 0) {
                 throw new Exception(
                     "Cannot retrieve minimum collapse cost: costs sorted set " +
                     "is empty."
                 );
             }
 
-            Edge min = this.costs.min;
+            Edge min = this.costs.Min;
 
             if (!this.costs.Remove(min)) {
                 throw new Exception(

@@ -37,7 +37,7 @@ namespace MarcosPereira.PolygonReducer {
         public void SetQuality(float reductionFactor) {
             int vertexCount = this.m.vertices.Length;
 
-            int currentVertexCount = vertexCount - this.m.deletedVertices.count;
+            int currentVertexCount = vertexCount - this.m.deletedVertices.Count;
             int targetVertexCount = this.GetTargetVertexCount(reductionFactor);
 
             if (currentVertexCount > targetVertexCount) {
@@ -45,7 +45,7 @@ namespace MarcosPereira.PolygonReducer {
                 // calculated ones if available, until target vertex count is
                 // reached.
                 while (
-                    vertexCount - this.m.deletedVertices.count >
+                    vertexCount - this.m.deletedVertices.Count >
                     targetVertexCount
                 ) {
                     if (
@@ -62,7 +62,7 @@ namespace MarcosPereira.PolygonReducer {
                 // we have run out of collapses to undo.
                 while (
                     this.lastAppliedCollapseStep > -1 &&
-                    vertexCount - this.m.deletedVertices.count <
+                    vertexCount - this.m.deletedVertices.Count <
                     targetVertexCount
                 ) {
                     this.UndoCollapseStep();
@@ -72,7 +72,7 @@ namespace MarcosPereira.PolygonReducer {
 
         private int GetTargetVertexCount(float reductionFactor) {
             int vertexCount = this.m.vertices.Length;
-            int untouchableCount = this.m.seams.count;
+            int untouchableCount = this.m.seams.Count;
             int touchableCount = vertexCount - untouchableCount;
             float keepFactor = 1f - reductionFactor;
 
@@ -154,7 +154,7 @@ namespace MarcosPereira.PolygonReducer {
             int[] triangles = this.m.triangles;
 
             // u is a vertex all by itself, signal for deletion
-            if (uTriangles.count == 0) {
+            if (uTriangles.Count == 0) {
                 return (-1f, -1);
             }
 

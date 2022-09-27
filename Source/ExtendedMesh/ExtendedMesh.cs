@@ -139,7 +139,7 @@ namespace MarcosPereira.PolygonReducer {
 
         private Mesh GetMesh() {
             int newVertexCount =
-                this.vertices.Length - this.deletedVertices.count;
+                this.vertices.Length - this.deletedVertices.Count;
 
             var newVertices = new Vector3[newVertexCount];
 

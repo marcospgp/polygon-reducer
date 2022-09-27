@@ -103,7 +103,7 @@ namespace MarcosPereira.PolygonReducer {
             }
 
             // Adjacent triangle removals
-            foreach (int vertex in this.adjacentTriangleRemovals.keys) {
+            foreach (int vertex in this.adjacentTriangleRemovals.Keys) {
                 SerializableHashSet<int> removals = this.adjacentTriangleRemovals[vertex];
 
                 foreach (int triangle in removals) {
@@ -113,7 +113,7 @@ namespace MarcosPereira.PolygonReducer {
             }
 
             // Adjacent triangle additions
-            foreach (int vertex in this.adjacentTriangleAdditions.keys) {
+            foreach (int vertex in this.adjacentTriangleAdditions.Keys) {
                 SerializableHashSet<int> additions =
                     this.adjacentTriangleAdditions[vertex];
 
@@ -174,7 +174,7 @@ namespace MarcosPereira.PolygonReducer {
             }
 
             // Adjacent triangle additions
-            foreach (int vertex in this.adjacentTriangleAdditions.keys) {
+            foreach (int vertex in this.adjacentTriangleAdditions.Keys) {
                 SerializableHashSet<int> additions =
                     this.adjacentTriangleAdditions[vertex];
 
@@ -185,7 +185,7 @@ namespace MarcosPereira.PolygonReducer {
             }
 
             // Adjacent triangle removals
-            foreach (int vertex in this.adjacentTriangleRemovals.keys) {
+            foreach (int vertex in this.adjacentTriangleRemovals.Keys) {
                 SerializableHashSet<int> removals =
                     this.adjacentTriangleRemovals[vertex];
 

@@ -38,7 +38,7 @@ namespace MarcosPereira.PolygonReducer {
 
             SerializableHashSet<int> vTriangles = m.adjacentTriangles[v];
 
-            if (vTriangles.count < 3) {
+            if (vTriangles.Count < 3) {
                 return true;
             }
 
