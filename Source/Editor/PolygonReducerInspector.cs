@@ -40,21 +40,19 @@ namespace MarcosPereira.PolygonReducer {
             // Wait for property field to be populated before modifying it.
             // Source: https://forum.unity.com/threads/solved-how-to-force-update-visual-element-on-the-current-frame.727040/#post-4984787
             _ = details.schedule.Execute(() => {
-                // Get size field of details array
-                IntegerField sizeField = details.Q<IntegerField>();
-
                 // Disallow changing array size in inspector
-                sizeField.SetEnabled(false);
 
-                sizeField.label = "Meshes found";
+                IntegerField sizeField = details.Query<IntegerField>();
 
-                // The tooltip doesn't work when the IntegerField has been
-                // disabled, sadly. I tried disabling only the inner input
-                // instead, which made the tooltip work, but then the size value
-                // could still be changed by clicking and dragging the mouse.
-                sizeField.tooltip =
-                    "The number of meshes found in this GameObject and its " +
-                    "children.";
+                if (sizeField != null) {
+                    sizeField.SetEnabled(false);
+                }
+
+                TextField textField = details.Query<TextField>();
+
+                if (textField != null) {
+                    textField.SetEnabled(false);
+                }
             });
 
             // Debug foldout
