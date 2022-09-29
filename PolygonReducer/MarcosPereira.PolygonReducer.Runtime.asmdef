@@ -1,0 +1,16 @@
+{
+    "name": "MarcosPereira.PolygonReducer.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d48972d68397b4dad9c104a648f5a817"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

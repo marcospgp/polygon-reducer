@@ -150,3 +150,5 @@ Marketing:
 * mention supported unity versions
 * Supports all mesh data: UVs, normals, tangents, bones, skinned meshes, animations
 * Supports any number of submeshes
+* Reduction in real time, as you drag the slider
+* Turn 3D scans into game-ready meshes

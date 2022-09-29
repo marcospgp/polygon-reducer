@@ -1,0 +1,8 @@
+﻿How to use
+
+Simply add the “Polygon Reducer” component to a GameObject containing the meshes you wish to optimize. The component will update all meshes in that GameObject and its children.
+Once the component is added, you will be able to drag the “Reduction Percent” slider while visualizing changes in real time.
+
+Setting up a LOD component
+
+To set up a “LOD Group” component, simply add the “Polygon Reducer” component to different copies of the original GameObject, and drag those into the respective “LOD Group” component’s “Renderers”.
