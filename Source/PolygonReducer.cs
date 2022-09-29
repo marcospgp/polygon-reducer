@@ -188,8 +188,8 @@ namespace MarcosPereira.PolygonReducer {
             static void LogReadWriteError(string meshName) =>
                 Debug.LogError(
                     $"Polygon Reducer cannot read mesh \"{meshName}\". " +
-                    "Please tick the \"Read/Write Enabled\" " +
-                    "checkbox in the mesh's import settings."
+                    "Please enable the \"Read/Write\" checkbox in the mesh's " +
+                    "import settings."
                 );
 
             static MeshData F(Mesh mesh) {
