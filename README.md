@@ -138,17 +138,3 @@ TODOs:
 * Serialize the static `ExtendedMesh`es Dictionary in `PolygonReducer.cs`. Dictionaries can't be serialized directly with `[SerializeField]`, so has to be done some other way. This will avoid recalculating vertex collapse costs when entering play mode. Have to be careful and ensure it does not get too large. Clear it periodically?
 * Do not run a `Monitor` coroutine in builds. Perhaps not even in editor unless necessary.
 * Run in a separate thread? In a job?
-
-Marketing:
-
-* have free version that doesn't work with UVs, so only non textured meshes or triplanar
-* have free version that collapses up to 50% and does not have source code?
-* mention that it works on URP and HDRP
-* show side by side mesh with 3 lod levels, one of them being original
-* make a PSX game with any asset!
-* comparison screenshot with zoom in on vertices
-* mention supported unity versions
-* Supports all mesh data: UVs, normals, tangents, bones, skinned meshes, animations
-* Supports any number of submeshes
-* Reduction in real time, as you drag the slider
-* Turn 3D scans into game-ready meshes
