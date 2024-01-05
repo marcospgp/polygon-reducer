@@ -4,8 +4,6 @@ Unity package for reducing mesh vertex counts in real time by dragging a slider.
 
 Vertex collapse algorithm based on [this gdmag article](https://drive.google.com/file/d/18dCjkbG8Yo9b5ypyQliyL7FN1KcEqLC4/view?usp=sharing).
 
-It may be easier to set up this package by simply installing it from the Unity asset store. In doing so, you can ignore any set up steps below.
-
 ## Dependencies
 
 The following repositories must be found in the Assets folder of the Unity project you want to use Polygon Reducer in:
@@ -59,82 +57,3 @@ we can check against it and avoid reducing it again.
 We also take care to store a reference to the original mesh, so we can restore
 it when Polygon Reducer is disabled - unless it has been manually replaced in
 the meantime.
-
-## Possible improvements
-
-### Moving target vertex to center of collapsed edge
-
-One possibility that is not mentioned on the original article describing this
-algorithm is moving the target vertex to the middle of the edge that was
-collapsed, instead of keeping it in the same place.
-
-The target vertex has to be moved at the beginning of the collapse operation,
-before any triangle normals are recalculated.
-
-This would require also recalculating the collapse costs for vertices
-connected to the target vertex, after the collapse is processed.
-
-I ended up removing this functionality since it may not be a good idea.
-It implies that the cost of collapsing u to v is the same as that of collapsing
-v to u, which is not the case. In practice, it seems to result in worse visuals.
-
-Update: one possibility would be to calculate the cost per edge by averaging the
-cost of collapsing each vertex into each other.
-
-Update 2: not sure how this would affect UVs.
-
-### Merging bone weights on collapse
-
-Currently, bone weights are simply copied to the new mesh after polygon
-reduction, with each undeleted vertex keeping its original bone weights.
-
-It would be possible to keep track of bone weights while collapsing vertices.
-When a vertex is collapsed, the target vertex would inherit its bone weights.
-This didn't seem necessary, however, as the current implementation works well.
-
-## Notes
-
-### No longer relying on OnEnable/OnDisable
-
-We used to reduce meshes in OnEnable and restore them in OnDisable, but there were
-multiple issues with this. When entering play mode, OnEnable sees an already enabled
-state after deserialization. Additionally, when polygon reducer is enabled on a prefab,
-and the folder that prefab is in is renamed, OnEnable sees the already reduced mesh in
-the mesh filter or skinned mesh renderer's sharedMesh - even if OnDisable restored it
-to its original.
-
-## TODO
-
-* Fix occasional reduction of already reduced mesh (mesh shows up as `<mesh name> (reduced)` in component's details dropdown, or even `<mesh name> (reduced) (reduced)` and so on.)
-* Sphere should have no seams, but has?
-
-maybe in onenable check children gameobjects and reduce any possible new additions?
-
-current issue: entering play mode doesn't work. need to serialize extended meshes or something.
-
-remove extendedmeshinfo now that everything is goddamn serializable
-
-fix extendedmeshcache (populate it in on enable?)
-
-fix serialization of nested (2D) structures. flatten and store flat list + list of sizes of sublists
-
-maybe create a custom class for serializable hashsets and such that handles the serialization/deserialization logic itself?
-
-review polygon reducer logic to see if extended meshes are only generated once
-
-since serializable classes are no longer scriptable objects, make them inherit the respective collection class so that intellisense is good and nice.
-
-In `this.costs = new SerializableSortedSet<Edge>(Costs.CostComparer());`, check if the comparison can be set at the Edge level instead of at the dictionary level.
-
-## TODOs ported from dead-drive repo
-
-Bugs:
-
-* (wontfix) Highlighting seams does not work correctly when the mesh is in a
-child object.
-
-TODOs:
-
-* Serialize the static `ExtendedMesh`es Dictionary in `PolygonReducer.cs`. Dictionaries can't be serialized directly with `[SerializeField]`, so has to be done some other way. This will avoid recalculating vertex collapse costs when entering play mode. Have to be careful and ensure it does not get too large. Clear it periodically?
-* Do not run a `Monitor` coroutine in builds. Perhaps not even in editor unless necessary.
-* Run in a separate thread? In a job?
